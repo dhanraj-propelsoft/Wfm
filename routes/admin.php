@@ -1,7 +1,7 @@
 <?php
 
 // HRM MODULE STARTS  
-
+//test dhana
 		Route::group(['prefix' => 'admin', 'middleware' => 'modules', 'modules' => 'super_admin'], function () {
 
 			Route::get('dashboard', ['as' => 'admin.dashboard', 'uses' => 'Admin\DashboardController@index']);

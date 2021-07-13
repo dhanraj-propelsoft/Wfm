@@ -1,0 +1,11 @@
+
+{
+	"new_employee_add_subject":"Add New Employee",
+	"new_employee_add_content": "Hi {name} <b>{bussiness}</b> added you as an Employee!Your Person Id is {person_id} And Your Login URL IS {url}",
+	"password_reset_subject": "Password reset request",
+	"password_reset_content": "You have requested for password reset. Here is your temporary password <b>{password}</b> .<br>You will be prompted to change this temporary password on first login.",	
+	"paid_payment_subject":"Paid Amount",
+	"paid_payment_content":"Hi {name},Your recent payment details: {data}."
+
+}
+

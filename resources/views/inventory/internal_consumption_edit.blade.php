@@ -1,0 +1,515 @@
+{{-- @extends('layouts.master')
+@section('head_links') @parent	
+@stop 
+--}}
+
+@if($transaction_type->type == 0)
+@include('includes.inventory')
+@elseif($transaction_type->type == 1) 
+@include('includes.trade')
+@endif
+@section('content')
+
+
+<div class="content">
+<!-- <div class="modal-header"> -->
+<div class="fill header">
+  <h3 class="float-left voucher_name">
+
+  @if(!empty($transactions))
+    {{ $transaction_type->display_name }}# {{ $transactions->order_no }}
+  @else
+  {{$transaction_type->display_name}}# {{$voucher_no}}
+  @endif
+  </h3>
+  <!-- <div style="cursor: pointer;" class="float-left voucher_code"><i style="font-size: 20px; color: #b73c3c; padding-top: 5px; padding-left: 5px;" class="fa icon-basic-gear"></i></div> -->
+  <div class="float-right close_full_modal"><i style="font-size: 60px; margin-top: -15px;" class="fa icon-arrows-remove"></i>
+
+  </div>
+ <!--  <div class="float-right side_panel"><i style="font-size: 25px" class="fa icon-basic-gear"></i></div> -->
+</div>
+<!-- </div> -->
+<div class="clearfix"></div>
+{!! Form::model($internal_consumption,['class' => 'form-horizontal validateform']) !!}
+    {{ csrf_field() }}
+<!--   <div class="modal-body"> -->
+
+<div class="form-body" style="padding: 15px 25px; ">
+
+	{{ Form::hidden('id',null) }}
+	
+	<div class="form-group">
+	  	<div class="row">
+	  	  	<div class="col-md-3">
+		  		<label class="required" for="consumption_date">Date</label>
+		  		{{ Form::text('consumption_date', $internal_consumption->date, ['class'=>'form-control accounts-date-picker rearrangedate']) }}
+		  		
+	  		</div>
+	  		<div class="col-md-3">
+		  		<label class="required" for="department_id">Department</label>
+		  		{!! Form::select('department_id', $departments,$selected_department->id,['class' => 'select_item']) !!}
+	  		</div>
+	  		<div class="col-md-3">
+		  		<label class="required"  for="employee_id">Employee</label>
+		  		{{ Form::select('employee_id',$employees, null, ['class' => 'form-control select_item', 'id' => 'employee_id']) }} 
+	  		</div>
+	  		<div class="col-md-3">
+				<label class="required" for="reference_no">Reference No</label>
+				{!! Form::text('reference_no', null, ['class' => 'form-control','id' => 'reference_no']); !!}
+			</div>	  	  
+	  	</div>
+	</div>
+
+  	<div class="form-group">
+		<div class="row">
+			<div class="col-md-3">
+				<label class="required" for="warehouse_id">Warehouse</label>
+				{!! Form::select('warehouse_id', $warehouse, null, ['class' => 'form-control select_item','id' => 'warehouse_id']); !!}
+			</div>
+			<div class="col-md-3">
+				<label class="required" for="store_id">Store</label>
+				{!! Form::select('store_id', $stores, null, ['class' => 'form-control select_item', 'id' => 'store_id']); !!}
+			</div>
+			<div class="col-md-3">
+				<label  for="rack_id">Rack</label>
+				{!! Form::select('rack_id',$racks, null, ['class' => 'form-control select_item', 'id' => 'rack_id']); !!}
+			</div>
+		</div>
+	</div>
+ 
+  	<div class="form-group">
+		<table style="border-collapse: collapse;" class="table table-bordered crud_table">
+			<thead>
+			<tr>
+				<th width="4%">#</th>
+				<th width="25%"> Item </th>
+				<th style=" width="10%">Available Quantity</th>
+				<th style=" width="10%">Quantity</th>
+				<th width="7%"></th>
+			</tr>
+			<tr>
+			</thead>
+			<tbody>
+		<?php $total_items = 1; ?>
+			@foreach($consumption_items as $consumption_item)
+
+			<tr>
+				<td class="sorter"><span class="index_number" style="float: right; padding-left: 5px;">1</span>
+				</td>
+				<td>
+					<select name="item_id" class="form-control select_item" id="item_id">
+					<option value="">Select Item</option>
+					<?php $selected_item =null; ?>
+					
+						@foreach($items as $item)
+							@if($selected_item != $item->category) 
+					
+					<optgroup label="{{$item->category}}"> @endif
+					
+					<?php $selected_item = $item->category; ?>
+						<option @if($item->id == $consumption_item->item_id) selected="" @endif value="{{$item->id}}">{{$item->name}}</option>
+					@endforeach
+						</optgroup>
+					</select>
+					{{ Form::textarea('description', $consumption_item->description, ['class'=>'form-control', 'style'=>'margin-top:5px; border: 1px dashed #ccc' , 'placeholder' => 'Description', 'size' => '3x2']) }}
+				</td>
+				<td>{{ Form::text('in_stock', $consumption_item->in_stock, ['class'=>'form-control','disabled' => 'true']) }}</td>
+				<td>
+					{{ Form::text('quantity', $consumption_item->quantity, ['class'=>'form-control decimal']) }}
+				</td>
+
+				<td>
+					<a @if(count($consumption_items) == 1) style="display: none;" @elseif(count($consumption_items) < $total_items) style="display: none;" @endif class="grid_label action-btn delete-icon remove_row"><i class="fa fa-trash-o"></i></a> 
+
+					<a @if(count($consumption_items) != $total_items) style="display: none;" @elseif(count($items) <= count($consumption_items)) style="display: none;" @endif   class="grid_label action-btn edit-icon add_row"><i class="fa fa-plus"></i></a>
+					
+				</td>
+			</tr>
+			<?php $total_items++; ?>
+			@endforeach
+			</tbody>
+		</table>
+	</div>
+
+</div>
+<!--   </div> -->
+  <div class="save_btn_container">
+	<button type="reset" class="btn btn-default cancel_transaction clear">Cancel</button>
+	<button style="float:right" type="submit" class="btn btn-success save">Save </button>
+	<div style="margin:-25px auto 0px; width: 150px;">
+  </div>
+  {!! Form::close() !!} 
+{{--
+@stop
+
+@section('dom_links')
+@parent
+
+--}}
+
+<script type="text/javascript">
+
+var current_select_item = null;
+  
+  $(document).ready(function() {
+
+  	@if(!empty($transactions) && $transaction_type != null )
+    order('{{$transactions->order_no}}', '{{$transaction_type->name}}');
+    @endif
+
+    $('input[name=quantity]').keyup(function() {
+		var quantity = parseFloat($(this).val());
+		var in_stock = parseFloat($('input[name=in_stock]').val());
+		if( quantity > in_stock ) {
+			$(this).val(in_stock);
+		}
+	});
+
+	basic_functions();
+
+	$('body').on('change', 'select[name=item_id]', function(){
+		var obj = $(this);
+		var id = obj.val();
+
+		if(id != "") {
+
+			$.ajax({
+
+				 url: '{{ route('adjustment.get_available_quantity') }}',
+				 type: 'post',
+				 data: {
+				 	_token : '{{csrf_token()}}',
+				 	id: id,
+				 },
+				 dataType: "json",
+				 success:function(data, textStatus, jqXHR) {
+
+				 	var result = data.result;
+
+				 	//console.log(result);
+
+				 	obj.closest('tr').find('input[name=in_stock]').val(result.in_stock);
+				 	obj.closest('tr').find('input[name=quantity]').prop("disabled", false);			 	
+				}
+			});
+		} else {
+			obj.closest('tr').find('input[name=quantity], input[name=in_stock]').val("");
+			obj.closest('tr').find('input[name=quantity]').prop("disabled", true);	
+		}
+	});
+
+	$("table").rowSorter({
+		handler: "td.sorter",
+		onDrop: function() { 
+			var i = 1;
+			$('.crud_table').find('tbody tr').each(function() {
+				$(this).find('.index_number').text(i++);
+			}) 
+		}
+	});
+
+	$('.cancel_transaction').on('click', function(e) {
+		e.preventDefault();
+		$('input[name=make_recurring]').prop('checked', false);
+		$('input[name=make_recurring]').trigger('change');
+		$('.close_full_modal').trigger('click');
+		
+	});
+
+	$( "select[name=department_id]" ).change(function () {
+		var employee = $( "select[name=employee_id]" );
+		var id = $(this).val();
+		employee.val("");
+		employee.select2('val', '');
+		employee.empty();
+		employee.append("<option value=''>Select Employee</option>");
+		if(id != "") {
+		$('.loader_wall_onspot').show();
+			$.ajax({
+				 url: '{{ route('get_employee_by_department') }}',
+				 type: 'get',
+				 data: {
+					department_id: id
+					},
+				 dataType: "json",
+					success:function(data, textStatus, jqXHR) {
+						var result = data.result;
+						for(var i in result) {	
+							employee.append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+						}
+						$('.loader_wall_onspot').hide();
+					},
+			 error:function(jqXHR, textStatus, errorThrown) {
+				//alert("New Request Failed " +textStatus);
+				}
+			});
+		}
+	});
+
+	$("select[name=warehouse_id]" ).change(function () {
+        var store = $( "select[name=store_id]" );
+        var id = $(this).val();
+        store.val("");
+        store.select2('val', '');
+        store.empty();
+        if(id != "") {
+            $('.loader_wall_onspot').show();
+            $.ajax({
+                 url: '{{ route('get_store') }}',
+                 type: 'get',
+                 data: {
+                    _token :$('input[name=_token]').val(),
+                    warehouse_id: id
+                    },
+                 dataType: "json",
+                    success:function(data, textStatus, jqXHR) {
+                        var result = data.store_result;
+                        store.append("<option value=''>Select Store</option>");
+                        for(var i in result) {  
+                            store.append("<option value='"+result[i].store_id+"'>"+result[i].store_name+"</option>");
+                        }
+                        $('.loader_wall_onspot').hide();
+                    },
+             error:function(jqXHR, textStatus, errorThrown) {
+                //alert("New Request Failed " +textStatus);
+                }
+            });
+        }
+    });
+
+    $("select[name=store_id]" ).change(function () {
+        var rack = $( "select[name=rack_id]" );
+        var id = $(this).val();
+        rack.val("");
+        rack.select2('val', '');
+        rack.empty();
+        if(id != "") {
+            $('.loader_wall_onspot').show();
+            $.ajax({
+                 url: '{{ route('get_rack') }}',
+                 type: 'get',
+                 data: {
+                    _token :$('input[name=_token]').val(),
+                    store_id: id
+                    },
+                 dataType: "json",
+                    success:function(data, textStatus, jqXHR) {
+                        var result = data.result;
+                        rack.append("<option value=''>Select Rack</option>");
+                        for(var i in result) {  
+                            rack.append("<option value='"+result[i].id+"'>"+result[i].name+"</option>");
+                        }
+                        $('.loader_wall_onspot').hide();
+                    },
+             error:function(jqXHR, textStatus, errorThrown) {
+                //alert("New Request Failed " +textStatus);
+                }
+            });
+        }
+    }); 
+
+	$('body').off('click', '.add_row').on('click', '.add_row', function() {
+		var obj = $(this);
+		var quantity = obj.closest("tr").find('input[name="quantity"]');
+		var item = obj.closest("tr").find('select[name="item_id"]');
+		var remaining_item = obj.closest("tr").find('select[name="item_id"] > optgroup > option');
+
+		if(item.val() != "" && quantity.val() != "" && quantity.val() != 0 ) {
+			$('.select_item').each(function() { 
+				var select = $(this);  
+				if(select.data('select2')) { 
+					select.select2("destroy"); 
+				} 
+			});
+
+			var clone = $(this).closest('tr').clone(true, true);
+			var selected_item = item.find(':selected').val();
+			clone.find('select[name=item_id], select[name=tax_id], select[name=discount_id], input[name=quantity], input[name=rate], input[name=amount]').val("");
+			clone.find('select[name=item_id] > optgroup > option[value="' + selected_item + '"]').wrap('<span>');
+			clone.find('.index_number').text($('.crud_table tbody tr').length + 1);
+
+			if(remaining_item.length > 1) {
+
+				clone.find('td').last().html('<a class="grid_label action-btn delete-icon remove_row"><i class="fa fa-trash-o"></i></a><a class="grid_label action-btn edit-icon add_row"><i class="fa fa-plus"></i></a>');
+
+				if(remaining_item.length == 2) {
+					clone.find('td').last().html('<a class="grid_label action-btn delete-icon remove_row"><i class="fa fa-trash-o"></i></a>');
+				}
+
+				obj.closest('tr').after(clone);
+			}
+
+			obj.parent().html('<a class="grid_label action-btn delete-icon remove_row"><i class="fa fa-trash-o"></i></a>');
+
+			item.find('optgroup > option[value!="' + selected_item + '"]').wrap('<span>');
+			$('.select_item').select2();
+		}
+
+	  });
+
+	$('body').on('click', '.remove_row', function() {
+		var obj = $(this);
+		var item = obj.closest("tr").find('select[name="item_id"]');
+		var remaining_item = obj.closest("tr").find('select[name="item_id"] > optgroup > option');
+		var last_row_item = obj.closest("table").find('tr').last().find('select[name="item_id"] > optgroup > option');
+		var selected_item = item.find(':selected').val();
+		var selected_item_array = [];
+
+		last_row_item.each(function() {
+			selected_item_array.push($(this).val());
+		});
+
+		selected_item_array.push(selected_item);
+	
+		obj.closest('tr').remove();
+
+		for (var i in selected_item_array) {
+			$('select[name=item_id]:last').find('optgroup > span > option[value="' + selected_item_array[i] + '"]').unwrap();
+		}
+
+		$('select[name="item_id"]:last > span > option').unwrap();
+
+		var row_index = $('.crud_table tbody > tr').length;
+
+		//console.log(row_index);
+
+		if(row_index > 1) {
+			$('.crud_table').find('tr').last().find('td').last().html('<a class="grid_label action-btn delete-icon remove_row"><i class="fa fa-trash-o"></i></a><a class="grid_label action-btn edit-icon add_row"><i class="fa fa-plus"></i></a>');
+		} else {
+			$('.crud_table').find('tr').last().find('td').last().html('<a class="grid_label action-btn edit-icon add_row"><i class="fa fa-plus"></i></a>');
+		}
+
+		table();
+
+	});
+
+
+
+	$('input[name=invoice_date]').on('change', function(e) {
+		var date = $(this).val();
+		$('input[name=due_date], input[name=shipping_date]').val("");
+		advanced_date(date);
+	});
+
+
+
+  });
+
+
+$('.validateform').validate({
+			errorElement: 'span', //default input error message container
+			errorClass: 'help-block', // default input error message class
+			focusInvalid: false, // do not focus the last invalid input
+			rules: {
+				employee_id: {
+					required: true
+				},
+				consumption_date: {
+					required: true
+				},
+				warehouse_id: {
+					required: true
+				},
+				store_id: {
+					required: true
+				},
+				
+				item_id: {
+					required: true
+				}
+			},
+
+			messages: {
+				employee_id: {
+					required: "Employee is required"
+				},
+				consumption_date: {
+					required: "Cosumption date is required"
+				},
+				warehouse_id: {
+					required: "Warehouse is required"
+				},
+				store_id: {
+					required: "Store date is required"
+				},
+				
+				item_id: {
+					required: "Item date is required"
+				}						
+			},
+
+			invalidHandler: function(event, validator) { //display error alert on form submit   
+				$('.alert-danger', $('.login-form')).show();
+			},
+
+			highlight: function(element) { // hightlight error inputs
+				$(element).closest('.form-group').addClass('has-error'); // set error class to the control group
+			},
+
+			success: function(label) {
+				label.closest('.form-group').removeClass('has-error');
+				label.remove();
+			},
+
+			submitHandler: function(form) {
+				
+				$.ajax({
+				 url: '{{ route('internal_consumption.update') }}',
+				type: 'post',
+				data: {
+					_token: '{{ csrf_token() }}',
+					_method: 'PATCH',
+					id: $('input[name=id]').val(),				
+					date: $('input[name=consumption_date]').val(),
+					employee_id: $('select[name=employee_id]').val(),
+					reference_no: $('input[name=reference_no]').val(),
+					warehouse_id: $('select[name=warehouse_id]').val(),
+					store_id: $('select[name=store_id]').val(),
+					rack_id: $('select[name=rack_id]').val(),
+
+					item_id: $('select[name=item_id]').map(function() { 
+						return this.value; 
+					}).get(),
+					description: $('textarea[name=description]').map(function() { 
+						return this.value; 
+					}).get(),
+					quantity: $('input[name=quantity]').map(function() { 
+						return this.value; 
+					}).get(),				
+					
+							 
+					},
+					
+					beforeSend:function() {
+						$('.loader_wall_onspot').show();
+					},
+				 dataType: "json",
+					success:function(data, textStatus, jqXHR) {
+
+				call_back(`<tr role="row" class="odd">
+					<td><input id="`+data.data.id+`" class="item_check" name="material_receipt" value="`+data.data.id+`" type="checkbox"><label for="`+data.data.id+`"><span></span></label>
+					</td>
+					<td>`+data.data.employee_name+`</td>
+					<td>`+data.data.order_no+`</td>
+					<td>`+data.data.date+`</td>					
+					
+					<td>
+					<a data-id="`+data.data.id+`" class="action-btn grid_label edit-icon edit"><i class="fa li_pen"></i></a>&nbsp;
+					<a data-id="`+data.data.id+`" class="action-btn delete-icon delete"><i class="fa fa-trash-o"></i></a>
+					</td></tr>`, `edit`, data.message,data.data.id);
+
+				$('.close_full_modal').trigger('click');
+				$('.loader_wall_onspot').hide();
+
+				},
+				 error:function(jqXHR, textStatus, errorThrown) {
+					//alert("New Request Failed " +textStatus);
+					}
+				});
+			}
+		});
+
+</script> 
+{{--
+@stop
+--}}

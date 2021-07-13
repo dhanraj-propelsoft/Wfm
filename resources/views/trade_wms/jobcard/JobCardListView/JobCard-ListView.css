@@ -1,0 +1,76 @@
+/*to reduce  index page padding size*/
+.table td {
+	padding: 2px;
+}
+
+/*to show whole index page data font size*/
+body {
+	font-size: 12px !important;
+}
+
+/*to reduce action button size*/
+.btn {
+
+	line-height: 1;
+}
+
+/* table row hover  */
+table#datatable tbody tr:hover {
+	background-color: #93AAC4;
+	color: white;
+}
+
+table#datatable tbody tr:hover>.sorting_1 {
+	background-color: #93AAC4;
+	color: white;
+}
+
+ /* menu header */
+ .css-title:before {
+	content: "some CSS title";
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	background: #DDD;
+	padding: 2px;
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+}
+.css-title :first-child {
+	margin-top: 20px;
+}
+
+/* menu header via data attribute */
+.data-title:before {
+	content: attr(data-menutitle);
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	background: #DDD;
+	padding: 2px;
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+}
+.data-title :first-child {
+	margin-top: 20px;
+}
+.contextmenu-item-custom_text {
+    text-align: center !important;
+    background-color: #93AAC4 !important;
+}
+.contextmenu-item-custom_text input {
+    background-color: #93AAC4 !important;
+    font-weight: bold;
+    text-align: center !important;
+    color: white !important;
+    border-width: 0px !important;
+    border:none !important;
+}

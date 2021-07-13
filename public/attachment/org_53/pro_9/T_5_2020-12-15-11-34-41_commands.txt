@@ -1,0 +1,22 @@
+custom one model migrate:
+php artisan migrate:custom -f migration_name
+-----------------------------------------------
+forgein key set:
+ALTER TABLE logistics_doc_receipts
+ADD FOREIGN KEY (created_by) REFERENCES hrm_employees(id);
+--------------------------------------------------
+laravel create project:
+composer create-project --prefer-dist laravel/laravel MyAccounts "5.6.*"
+-----------------------------------------------------------------------------
+local Json Run:
+json-server -p 5555 *products*.json
+--------------------------------------------------------------------------
+yii migrations:
+step:1
+php yii migrate/create create_*salary_component*_table
+
+	here 'salary_component' is table name
+step:2:
+*after coulmn name write*
+php yii migrate 
+-------------------------------------------------------------

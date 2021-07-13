@@ -1,0 +1,6 @@
+{
+	"password_reset": "emails.template1",
+	"paid_amount": "emails.template2",
+	"employee_add_email":"emails.employee_added_mail"
+}
+

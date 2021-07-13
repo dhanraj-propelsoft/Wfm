@@ -1,0 +1,27 @@
+{
+    "name": "sayeed/custom-migrate",
+    "description": "Custom migrate in laravel. You can individual file migrate here",
+    "keywords": ["migration","migrate","database","specific"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hasan",
+            "email": "jbhasan@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Sayeed\\CustomMigrate\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sayeed\\CustomMigrate\\CustomMigrateServiceProvider"
+            ]
+        }
+    }
+}

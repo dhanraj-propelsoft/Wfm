@@ -1,0 +1,378 @@
+/*These styles using for chevron UI.this chevron format used for job card status change*/
+.chevron {
+	display: inline-block;
+	position: relative;
+	clear: both;
+	/*  padding: 8px;*/
+	height: 24px;
+	width: 120px;
+	margin-top: 25px;
+	text-align: center;
+	margin-right: 3px;
+}
+
+.chevron:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 50%;
+	width: 100%;
+	background: #B76666;
+	color: white;
+	-webkit-transform: skew(60deg, 0deg);
+	-moz-transform: skew(60deg, 0deg);
+	-ms-transform: skew(60deg, 0deg);
+	-o-transform: skew(60deg, 0deg);
+	transform: skew(60deg, 0deg);
+	/* z-index:-1;*/
+}
+
+.chevron:after {
+	content: '';
+	position: absolute;
+	top: 49%;
+	right: 0;
+	height: 50%;
+	width: 100%;
+	background: #B76666;
+	-webkit-transform: skew(-60deg, 0deg);
+	-moz-transform: skew(-60deg, 0deg);
+	-ms-transform: skew(-60deg, 0deg);
+	-o-transform: skew(-60deg, 0deg);
+	transform: skew(-60deg, 0deg);
+	/* z-index:-1;*/
+}
+
+.chevron_active {
+	display: inline-block;
+	position: relative;
+	clear: both;
+	/* padding: 8px;*/
+	height: 24px;
+	width: 120px;
+	margin-top: 25px;
+	text-align: center;
+	margin-right: 3px;
+}
+
+.chevron_active:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 50%;
+	width: 100%;
+	background: #079735;
+	color: white;
+	-webkit-transform: skew(60deg, 0deg);
+	-moz-transform: skew(60deg, 0deg);
+	-ms-transform: skew(60deg, 0deg);
+	-o-transform: skew(60deg, 0deg);
+	transform: skew(60deg, 0deg);
+	/* z-index:-1;*/
+}
+
+.chevron_active:after {
+	content: '';
+	position: absolute;
+	top: 49%;
+	right: 0;
+	height: 50%;
+	width: 100%;
+	background: #079735;
+	-webkit-transform: skew(-60deg, 0deg);
+	-moz-transform: skew(-60deg, 0deg);
+	-ms-transform: skew(-60deg, 0deg);
+	-o-transform: skew(-60deg, 0deg);
+	transform: skew(-60deg, 0deg);
+	/* z-index:-1;*/
+}
+
+#jq_accordion .ui-state-active {
+	background-image: none;
+	background-color: #dae2eb !important;
+	color: #454545 !important;
+	border: 1px solid #454545 !important;
+}
+
+#jq_accordion .ui-state-default {
+	background-image: none;
+	background-color: #ccd3db;
+	color: #454545;
+	height: 35px;
+	display: block;
+	vertical-align: middle;
+	margin: 0;
+	margin-top: 15px;
+	font-size: 17px;
+	font-weight: bold;
+	font-color: #0000;
+	text-transform: capitalize;
+	letter-spacing: 1px;
+	border: none;
+	border-radius: 5px;
+}
+
+#jq_accordion_l2 .ui-state-active {
+	background-image: none;
+	background-color: #dae2eb !important;
+	color: #454545 !important;
+	border: 1px solid #454545 !important;
+}
+
+#jq_accordion_l2 .ui-state-default {
+	background-image: none;
+	background-color: #d4d7d9;
+	color: #454545;
+	height: 30px;
+	display: block;
+	vertical-align: middle;
+	margin: 0;
+	margin-top: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	font-color: #0000;
+	text-transform: capitalize;
+	letter-spacing: 1px;
+	border: none;
+	border-radius: 5px;
+}
+
+#jq_accordion_alerts .ui-state-active {
+	background-image: none;
+	background-color: #f2dede !important;
+	color: #454545 !important;
+	border: 1px solid #ebccd1 !important;
+}
+
+#jq_accordion_alerts .ui-state-default {
+	background-image: none;
+	background-color: #f2dede;
+	color: #454545;
+	height: 30px;
+	display: block;
+	vertical-align: middle;
+	margin: 0;
+	margin-top: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	font-color: #0000;
+	text-transform: capitalize;
+	letter-spacing: 1px;
+	border: none;
+	border-radius: 5px;
+}
+
+#jq_accordion_alerts .ui-widget-content {
+	background: #f4eded;
+	color: #a94442;
+}
+
+#sortable1, #sortable2 {
+	border: 5px solid #eee;
+	min-height: 250px;
+	min-width: 200px;
+	list-style-type: none;
+	margin: 0;
+	padding: 5px 0 0 0;
+	float: left;
+	margin-right: 10px;
+	width: 100%;
+	height: 250px;
+	overflow: auto;
+}
+/*#sortable1 li {*/
+/*  margin: 0 5px 5px 5px;*/
+/*  padding: 5px;*/
+/*  font-size: 1.2em;*/
+/*  width: 400px;*/
+/*  cursor: pointer;*/
+/*}*/
+#sortable1 input {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	font-size: 1.2em;
+	min-width: 175px;
+	width: 98%;
+}
+
+#sortable1 li:hover {
+	background-color: #5bc25d;
+}
+
+#sortable1 li {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	font-size: 1.2em;
+	min-width: 175px;
+	width: 98%;
+	background-color: #d1d1d1;
+	cursor: pointer;
+}
+
+#sortable2 li {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	font-size: 1.2em;
+	min-width: 175px;
+	width: 98%;
+	background-color: #5bc25d;
+	cursor: pointer;
+}
+
+#sortable2 li:hover {
+	background-color: #d1d1d1;
+}
+
+.vehicle-info {
+	border: 5px outset #e7e9f8;
+	background-color: #293262de;
+	text-align: center;
+	color: white;
+	height: 35px;
+}
+
+table#selected_item_parts_table.dataTable tbody tr:hover {
+	background-color: #93AAC4;
+	color: white;
+}
+
+table#selected_item_parts_table.dataTable tbody tr:hover>.sorting_1 {
+	background-color: #93AAC4;
+	color: white;
+}
+
+table#selected_item_service_table.dataTable tbody tr:hover {
+	background-color: #93AAC4;
+	color: white;
+}
+
+table#selected_item_service_table.dataTable tbody tr:hover>.sorting_1 {
+	background-color: #93AAC4;
+	color: white;
+}
+
+.chevron1 {
+	padding: 6px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #bbb #aaa #999;
+	background: #e9ecef;
+	color: white !important;
+	font-weight: bold;
+	text-decoration: none;
+	-webkit-border-radius: 5px;
+	-webkit-box-shadow: inset 0 1px 1px #fff, inset 0 -1px 1px #aaa, 0 2px
+		4px -3px #666;
+}
+
+.chevron1_active {
+	background: #079735;
+	border-color: #888 #aaa #eee;
+	color: white !important;
+}
+
+.chevron1_inactive {
+	background: #B76666;
+}
+
+.chevron1:hover {
+	color: white;
+	text-decoration: none;
+}
+
+.chevron1_disable {
+	background: #e9ecef;
+	pointer-events: none;
+	cursor: default;
+}
+
+/* JOBCARD STATUS ARROW CSS */
+.arrow-span {
+	position: relative;
+	top: 3px;
+	z-index: 1;
+	color: white;
+	font-weight: bold;
+	font-size: 10px;
+}
+
+.font-size-10 {
+	font-size: 10px;
+}
+
+.font-size-8 {
+	font-size: 8px;
+}
+
+.font-size-7 {
+	font-size: 7px;
+}
+
+/* change the color for active */
+.navbar-dark .nav-link.active {
+	color: #454545;
+	background-color: #ccd3db;
+}
+
+/* change the color during hover */
+.navbar-dark .nav-item:focus .nav-link, .navbar-dark .nav-item:hover .nav-link
+	{
+	color: #454545;
+	background-color: #ced6de;
+}
+
+/* change the inactive link color */
+.navbar-dark .nav-link {
+	color: #7d7d7d;
+}
+
+/* disable fields */
+.disable-individual, .disable-business {
+	display: none;
+}
+
+/* Capitalize */
+input.properCase {
+	text-transform: capitalize;
+}
+
+/* UpperCase */
+input.upperCase {
+	text-transform: uppercase;
+}
+
+.disableLink {
+	color: currentColor;
+	cursor: not-allowed;
+	opacity: 0.5;
+	text-decoration: none;
+	pointer-events: none;
+}
+
+.errorsDiv {
+	color: #a94442;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	border-radius: 5px;
+	display: show;
+}
+
+.bc-icons-2 .breadcrumb-item+.breadcrumb-item::before {
+	content: none;
+}
+
+.bc-icons-2 .breadcrumb-item.active {
+	color: #455a64;
+}
+
+/* Style to change separator  */
+.breadcrumb-item+.breadcrumb-item::before {
+	content: ">";
+}
+
+.breadcrumb {
+	color: #a94442;
+	background-color: #ecdede;
+}

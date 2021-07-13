@@ -1,0 +1,1 @@
+{"user_name":"Rajesh","datetime":"2021-02-08 19:02","url":"http:\/\/localhost\/propel\/trade_wms\/job_board","page":"Job Status Dashboard"}

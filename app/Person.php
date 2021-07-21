@@ -129,4 +129,8 @@ class Person extends Model
 	public function personOrgAssoication(){
         return $this->hasMany('App\People','person_id','id');
     }
+    public function personMobile()
+    {
+            return $this->hasOne('App\Http\Controllers\Common\Model\PersonMobile','person_id','id');
+    }
 }

@@ -133,4 +133,8 @@ class Person extends Model
     {
             return $this->hasOne('App\Http\Controllers\Common\Model\PersonMobile','person_id','id');
     }
+     public function user()
+        {
+                return $this->hasOne('App\User','person_id','id');
+        }
 }

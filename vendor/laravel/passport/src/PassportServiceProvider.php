@@ -3,24 +3,25 @@
 namespace Laravel\Passport;
 
 use DateInterval;
-use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Auth\RequestGuard;
+use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Bridge\PersonalAccessGrant;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Guards\TokenGuard;
-use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
-use Laravel\Passport\Bridge\PersonalAccessGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
-use Laravel\Passport\Bridge\RefreshTokenRepository;
-use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\ResourceServer;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -39,11 +40,15 @@ class PassportServiceProvider extends ServiceProvider
             $this->registerMigrations();
 
             $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations'),
+            ], 'passport-migrations');
+
+            $this->publishes([
                 __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
             ], 'passport-views');
 
             $this->publishes([
-                __DIR__.'/../resources/assets/js/components' => base_path('resources/assets/js/components/passport'),
+                __DIR__.'/../resources/js/components' => base_path('resources/js/components/passport'),
             ], 'passport-components');
 
             $this->commands([
@@ -64,10 +69,6 @@ class PassportServiceProvider extends ServiceProvider
         if (Passport::$runsMigrations) {
             return $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
-
-        $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
-        ], 'passport-migrations');
     }
 
     /**
@@ -77,11 +78,14 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if (! $this->app->configurationIsCached()) {
+            $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
+        }
+
         $this->registerAuthorizationServer();
-
         $this->registerResourceServer();
-
         $this->registerGuard();
+        $this->offerPublishing();
     }
 
     /**
@@ -93,6 +97,8 @@ class PassportServiceProvider extends ServiceProvider
     {
         $this->app->singleton(AuthorizationServer::class, function () {
             return tap($this->makeAuthorizationServer(), function ($server) {
+                $server->setDefaultScope(Passport::$defaultScope);
+
                 $server->enableGrantType(
                     $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
@@ -106,7 +112,7 @@ class PassportServiceProvider extends ServiceProvider
                 );
 
                 $server->enableGrantType(
-                    new PersonalAccessGrant, new DateInterval('P1Y')
+                    new PersonalAccessGrant, Passport::personalAccessTokensExpireIn()
                 );
 
                 $server->enableGrantType(
@@ -200,7 +206,7 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
-            $this->makeCryptKey('oauth-private.key'),
+            $this->makeCryptKey('private'),
             app('encrypter')->getKey()
         );
     }
@@ -215,24 +221,26 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(ResourceServer::class, function () {
             return new ResourceServer(
                 $this->app->make(Bridge\AccessTokenRepository::class),
-                $this->makeCryptKey('oauth-public.key')
+                $this->makeCryptKey('public')
             );
         });
     }
 
     /**
-     * Create a CryptKey instance without permissions check
+     * Create a CryptKey instance without permissions check.
      *
      * @param string $key
      * @return \League\OAuth2\Server\CryptKey
      */
-    protected function makeCryptKey($key)
+    protected function makeCryptKey($type)
     {
-        return new CryptKey(
-            'file://'.Passport::keyPath($key),
-            null,
-            false
-        );
+        $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get('passport.'.$type.'_key'));
+
+        if (! $key) {
+            $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
+        }
+
+        return new CryptKey($key, null, false);
     }
 
     /**
@@ -280,5 +288,19 @@ class PassportServiceProvider extends ServiceProvider
                 Cookie::queue(Cookie::forget(Passport::cookie()));
             }
         });
+    }
+
+    /**
+     * Setup the resource publishing groups for Passport.
+     *
+     * @return void
+     */
+    protected function offerPublishing()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/passport.php' => config_path('passport.php'),
+            ], 'passport-config');
+        }
     }
 }

@@ -3,7 +3,6 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 class TokenRepository
 {
@@ -15,7 +14,7 @@ class TokenRepository
      */
     public function create($attributes)
     {
-        return Token::create($attributes);
+        return Passport::token()->create($attributes);
     }
 
     /**
@@ -26,7 +25,7 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Token::find($id);
+        return Passport::token()->where('id', $id)->first();
     }
 
     /**
@@ -38,7 +37,7 @@ class TokenRepository
      */
     public function findForUser($id, $userId)
     {
-        return Token::where('id', $id)->where('user_id', $userId)->first();
+        return Passport::token()->where('id', $id)->where('user_id', $userId)->first();
     }
 
     /**
@@ -49,7 +48,7 @@ class TokenRepository
      */
     public function forUser($userId)
     {
-        return Token::where('user_id', $userId)->get();
+        return Passport::token()->where('user_id', $userId)->get();
     }
 
     /**
@@ -63,7 +62,7 @@ class TokenRepository
     {
         return $client->tokens()
                     ->whereUserId($user->getKey())
-                    ->whereRevoked(0)
+                    ->where('revoked', 0)
                     ->where('expires_at', '>', Carbon::now())
                     ->first();
     }
@@ -87,7 +86,7 @@ class TokenRepository
      */
     public function revokeAccessToken($id)
     {
-        return Token::where('id', $id)->update(['revoked' => true]);
+        return Passport::token()->where('id', $id)->update(['revoked' => true]);
     }
 
     /**
@@ -117,7 +116,7 @@ class TokenRepository
     {
         return $client->tokens()
                       ->whereUserId($user->getKey())
-                      ->whereRevoked(0)
+                      ->where('revoked', 0)
                       ->where('expires_at', '>', Carbon::now())
                       ->latest('expires_at')
                       ->first();

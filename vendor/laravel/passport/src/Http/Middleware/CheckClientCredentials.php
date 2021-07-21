@@ -3,10 +3,10 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
-use League\OAuth2\Server\ResourceServer;
 use Illuminate\Auth\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
 class CheckClientCredentials
@@ -16,7 +16,7 @@ class CheckClientCredentials
      *
      * @var \League\OAuth2\Server\ResourceServer
      */
-    private $server;
+    protected $server;
 
     /**
      * Create a new middleware instance.
@@ -56,7 +56,7 @@ class CheckClientCredentials
     /**
      * Validate the scopes on the incoming request.
      *
-     * @param  \Psr\Http\Message\ResponseInterface $psr
+     * @param  \Psr\Http\Message\ServerRequestInterface $psr
      * @param  array  $scopes
      * @return void
      * @throws \Laravel\Passport\Exceptions\MissingScopeException

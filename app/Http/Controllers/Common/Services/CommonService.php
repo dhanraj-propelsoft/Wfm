@@ -55,10 +55,19 @@ class CommonService
         $subject = "OTP SEND";
         $sms_content = "$newuser->otp " . config('constants.messages.sms_activation');
 
-        $msg = $this->smsNotifyService->save($mobile, $subject, $name, $sms_content, " ", "OTP");
+        $smsNotifyResponse = $this->smsNotifyService->save($mobile, $subject, $name, $sms_content, " ", "OTP");
 
 
-dd($msg);
+        if ($smsNotifyResponse['message'] == pStatusSuccess()) {
+
+                        return [
+                            'message' => $smsNotifyResponse['message'],
+                            'data' => "OTP Sended"
+                        ];
+                    } else {
+                        Log::info('UserSystemService->forgotPassword :- Return');
+                        return $smsNotifyResponse;
+                    }
 
        }
 }

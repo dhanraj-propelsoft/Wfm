@@ -25,7 +25,7 @@ class CommonController extends Controller
     {
 
         $datas = $this->service->getPersonByParameter($mobileNo);
-         dd($datas);
+
         return $datas;
     }
     public function sendOtp()

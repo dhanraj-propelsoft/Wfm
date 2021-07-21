@@ -27,7 +27,7 @@ class SmsNotificationService
         $model->subject = $subject;
         $model->content_addressed_to = $contentAddressedTo;
         $model->content = $content;
-        $model->organization_id = ($organizationId)?$organizationId:null;
+        //$model->organization_id = ($organizationId)?$organizationId:null;
         $model->status = 0; // is numberic not a string
        
         Log::info('SmsNotificationService->createModel:- return' . json_encode($model));

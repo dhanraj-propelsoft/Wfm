@@ -12,15 +12,17 @@ use Auth;
 use App\User;
 use Carbon\Carbon;
 use App\Http\Controllers\Common\Repository\CommonRepository;
+use App\Notification\Service\SmsNotificationService;
 class CommonService
 {
 
         /**
          * * To connect Repo **
          */
-        public function __construct(CommonRepository $commonRepo)
+        public function __construct(SmsNotificationService $smsNotifyService,CommonRepository $commonRepo)
         {
             $this->commonRepo = $commonRepo;
+            $this->smsNotifyService = $smsNotifyService;
         }
 
 
@@ -42,7 +44,7 @@ class CommonService
    public function sendOtp($userId)
    {
         $newuser = User::findOrFail($userId);
-        $otp = pGenarateOTP(4);
+
         $newuser->otp_time = Carbon::now()->format('Y-m-d H:i:s');
         $newuser->otp = pGenarateOTP(4);
         $newuser->otp_sent += 1;
@@ -53,10 +55,10 @@ class CommonService
         $subject = "OTP SEND";
         $sms_content = "$newuser->otp " . config('constants.messages.sms_activation');
 
-        $msg = $this->SmsNotificationService->save($mobile, $subject, $name, $sms_content, " ", "OTP");
+        $msg = $this->smsNotifyService->save($mobile, $subject, $name, $sms_content, " ", "OTP");
 
 
-
+dd($msg);
 
        }
 }

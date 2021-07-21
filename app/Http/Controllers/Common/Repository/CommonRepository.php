@@ -15,7 +15,7 @@ class CommonRepository
      public function getPersonByParameters($mobileNo=false,$email = false,$person_id =false)
         {
 
-            $datas = Person::with('personMobile');
+            $datas = Person::with('personMobile','user');
                    $datas->whereHas('personMobile', function ($query) use ($mobileNo)
                     {
                         $query->where(['mobile_no' => $mobileNo]);

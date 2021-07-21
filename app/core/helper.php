@@ -36,3 +36,15 @@ if (!function_exists('pStatusFailed')) {
         return 'FAILED';
     }
 }
+if (!function_exists('pGenarateOTP')) {
+ function pGenarateOTP($num)
+    {
+        $x = $num - 1;
+
+        $min = pow(10, $x);
+        $max = pow(10, $x + 1) - 1;
+        $value = rand($min, $max);
+dd($value);
+        return $value;
+    }
+}

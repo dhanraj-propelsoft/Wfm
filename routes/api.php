@@ -22,6 +22,10 @@ Route::post('login', 'Api\LoginController@login');
 //new Api Started By Dhana
 
 Route::get('getPersonByMobileNo/{mobileNo}', 'Common\Controller\CommonController@getPersonByMobileNo');
+Route::post('wfmlogin', 'Entitlement\Controller\LoginController@login');
+Route::post('sendOtpForgetPassword', 'Common\Controller\CommonController@sendOtp');
+
+
 //Ended Peron Related Api By Dhana
 Route::get('get_state', 'Api\SignupController@get_state');
 

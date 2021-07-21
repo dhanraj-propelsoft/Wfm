@@ -19,7 +19,10 @@ use PhpParser\Node\Expr\Include_;
 Route::post('login', 'Api\LoginController@login');
 
 
+//new Api Started By Dhana
 
+Route::get('getPersonByMobileNo/{mobileNo}', 'Common\Controller\CommonController@getPersonByMobileNo');
+//Ended Peron Related Api By Dhana
 Route::get('get_state', 'Api\SignupController@get_state');
 
 Route::get('get_rate/{org_id}/{vehicle_id}/{item_id}', 'Api\Wms\JobcardController@get_item_rate');

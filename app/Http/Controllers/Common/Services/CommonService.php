@@ -48,26 +48,46 @@ class CommonService
         $newuser->otp_time = Carbon::now()->format('Y-m-d H:i:s');
         $newuser->otp = pGenarateOTP(4);
         $newuser->otp_sent += 1;
-        $newuser->save();
+        $userModel = $this->commonRepo->saveUser($newuser);
+       if($userModel['message']==pStatusSuccess())
+       {
+              $name = $newuser->name;
+              $mobile = $newuser->mobile;
+              $subject = "OTP SEND";
+              $sms_content = "$newuser->otp " . config('constants.messages.sms_activation');
+              $smsNotifyResponse = $this->smsNotifyService->save($mobile, $subject, $name, $sms_content, " ", "OTP");
 
-        $name = $newuser->name;
-        $mobile = $newuser->mobile;
-        $subject = "OTP SEND";
-        $sms_content = "$newuser->otp " . config('constants.messages.sms_activation');
-
-        $smsNotifyResponse = $this->smsNotifyService->save($mobile, $subject, $name, $sms_content, " ", "OTP");
-
-
-        if ($smsNotifyResponse['message'] == pStatusSuccess()) {
-
-                        return [
-                            'message' => $smsNotifyResponse['message'],
-                            'data' => "OTP Sended"
-                        ];
-                    } else {
-                        Log::info('UserSystemService->forgotPassword :- Return');
-                        return $smsNotifyResponse;
-                    }
-
+            if ($smsNotifyResponse['message'] == pStatusSuccess())
+            {
+               return ['message' => $smsNotifyResponse['message'],'data' => "OTP Sended" ];
+            }
+            else
+            {
+                return $smsNotifyResponse;
+            }
+       }else
+       {
+            return $userModel;
        }
+   }
+   public function OTPVerification($datas)
+   {
+         $data =(object)$datas;
+         $userModel = $this->commonRepo->getUserDataByUserId($data->userId);
+         if($userModel)
+         {
+              if($userModel->otp == $data->otp )
+              {
+                 return ['message' => pStatusSuccess(),'data' => "OTP matched" ];
+              }else
+              {
+                  return ['message' => pStatusFailed(),'data' => "OTP MissMatched" ];
+              }
+         }else
+         {
+           return ['message' => pStatusFailed(),'data' => "This User Not Available" ];
+         }
+   }
+
+
 }

@@ -34,4 +34,9 @@ class CommonController extends Controller
 
         return $datas;
     }
+    public function OTPVerification(Request $request)
+    {
+        $datas = $this->service->OTPVerification($request->all());
+        return $datas;
+    }
 }

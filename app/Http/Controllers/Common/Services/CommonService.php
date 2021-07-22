@@ -13,6 +13,7 @@ use App\User;
 use Carbon\Carbon;
 use App\Http\Controllers\Common\Repository\CommonRepository;
 use App\Notification\Service\SmsNotificationService;
+use Hash;
 class CommonService
 {
 
@@ -88,6 +89,41 @@ class CommonService
            return ['message' => pStatusFailed(),'data' => "This User Not Available" ];
          }
    }
+   public function updatePassword($datas)
+      {
+
+            $data =(object)$datas;
+            $validator = $this->passwordValidation($datas);
+
+
+            if ($validator->fails()) {
+
+                return [
+                    'message' => $validator->messages()->first(),
+                    'data' => ''
+                ];
+            }
+
+            $userModel = $this->commonRepo->getUserDataByUserId($data->userId);
+            $userModel->password = Hash::make($data->new_password);
+            $userResponse = $this->commonRepo->saveUser($userModel);
+           if ($userResponse['message'] == pStatusSuccess())
+           {
+               return ['message' => $userResponse['message'],'data' => "Password Updated Successfully" ];
+           }
+           else
+            {
+               return $userResponse;
+            }
+      }
+      public function passwordValidation($data)
+      {
+         $rule=['new_password' => ['required'],'new_confirm_password' => ['same:new_password']];
+
+         $validator = Validator::make($data, $rule);
+
+         return $validator;
+      }
 
 
 }

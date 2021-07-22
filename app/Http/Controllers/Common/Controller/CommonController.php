@@ -39,4 +39,10 @@ class CommonController extends Controller
         $datas = $this->service->OTPVerification($request->all());
         return $datas;
     }
+    public function updatePassword(Request $request)
+    {
+       $datas = $this->service->updatePassword($request->all());
+       return $datas;
+
+    }
 }

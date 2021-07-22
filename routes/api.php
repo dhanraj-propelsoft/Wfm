@@ -25,6 +25,7 @@ Route::get('getPersonByMobileNo/{mobileNo}', 'Common\Controller\CommonController
 Route::post('wfmlogin', 'Entitlement\Controller\LoginController@login');
 Route::post('sendOtpForgetPassword', 'Common\Controller\CommonController@sendOtp');
 Route::post('OTPVerification', 'Common\Controller\CommonController@OTPVerification');
+Route::post('updatePassword', 'Common\Controller\CommonController@updatePassword');
 
 
 //Ended Peron Related Api By Dhana

@@ -45,4 +45,5 @@ class CommonController extends Controller
        return $datas;
 
     }
+
 }

@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use App\Http\Controllers\Common\Repository\CommonRepository;
 use App\Notification\Service\SmsNotificationService;
 use Hash;
+use App\Http\Controllers\Common\Model\PersonVO;
 class CommonService
 {
 
@@ -30,16 +31,13 @@ class CommonService
 
    public function getPersonByParameter($mobileNo=false,$email = false,$person_id =false)
    {
-         $datas = $this->commonRepo->getPersonByParameters($mobileNo);
-         if($datas)
-         {
-            $response = ['message' => pStatusSuccess(),'data' =>  $datas];
-         }
-         else
-         {
-           $response = ['message' => pStatusFailed(), 'data' =>  ""];
-         }
-          return $response;
+           $datas = $this->commonRepo->getPersonByParameters($mobileNo);
+
+           $entities = $this->convertToPersonVO($datas);
+
+           $response = ['message' => pStatusSuccess(),'data' =>  $entities];
+
+           return $response;
    }
 
    public function sendOtp($userId)
@@ -124,6 +122,12 @@ class CommonService
 
          return $validator;
       }
+      public function convertToPersonVO($model = false)
+          {
+
+              $vo = new PersonVO($model);
+              return $vo;
+          }
 
 
 }

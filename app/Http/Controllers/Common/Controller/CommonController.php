@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Session;
 use Carbon;
 use Illuminate\Support\Facades\Log;
-
 use App\Http\Controllers\Common\Services\CommonService;
 
 class CommonController extends Controller
@@ -23,9 +22,7 @@ class CommonController extends Controller
 
     public function getPersonByMobileNo($mobileNo)
     {
-
         $datas = $this->service->getPersonByParameter($mobileNo);
-
         return $datas;
     }
     public function sendOtp()
@@ -43,7 +40,16 @@ class CommonController extends Controller
     {
        $datas = $this->service->updatePassword($request->all());
        return $datas;
-
+    }
+    public function createPersonTmpFile(Request $request)
+    {
+       $datas = $this->service->createPersonTmpFile($request->all());
+       return $datas;
+    }
+    public function getTmpPersonFile(Request $request)
+    {
+        $datas = $this->service->getTmpPersonFile($request->all());
+        return $datas;
     }
 
 }

@@ -15,13 +15,22 @@ class CommonRepository
 {
      public function getPersonByParameters($mobileNo=false,$email = false,$person_id =false)
      {
-          $datas = Person::with('personMobile','user');
+          $datas = Person::with('personMobile','user','personEmail');
           $datas->whereHas('personMobile', function ($query) use ($mobileNo)
           {
              $query->where(['mobile_no' => $mobileNo]);
           });
-          $data = $datas->first();
-          return $data;
+
+//           if($mobileNo&&$email)
+//           {
+//              return $datas->get();
+//           }
+//           else
+//           {
+               $datass = $datas->first();
+//           }
+
+          return $datass;
      }
      public function getUserDataByUserId($userId)
      {
@@ -51,4 +60,27 @@ class CommonRepository
             }
 
           }
+          public function savePerson($model)
+               {
+                      try {
+
+                          $result = DB::transaction(function () use ($model) {
+
+                              $model->save();
+                              return [
+                                  'message' => pStatusSuccess(),
+                                  'data' => $model
+                              ];
+                          });
+
+                          return $result;
+                      } catch (\Exception $e) {
+
+                          return [
+                              'message' => pStatusFailed(),
+                              'data' => $e
+                          ];
+                      }
+
+                    }
 }

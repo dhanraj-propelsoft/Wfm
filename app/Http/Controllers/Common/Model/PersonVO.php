@@ -14,6 +14,8 @@ class PersonVO extends ValueObject
     public $pDob;
     public $pGender;
     public $pBloodGroup;
+    public $pPersonEmail;
+    public $pPersonMobile;
     public $pPersonMobileDetails;
     public $pPersonUserDetails;
 
@@ -32,12 +34,13 @@ class PersonVO extends ValueObject
           $this->pDob = '';
           $this->pGender = '';
           $this->pBloodGroup = '';
-          $this->pPersonMobileDetails ="";
-          $this->pPersonUserDetails ="";
+          $this->pPersonMobile = '';
+          $this->pPersonEmail = '';
+          $this->pPersonMobileDetails = null;
+          $this->pPersonUserDetails = null;
          }
          else
          {
-
               $this->pId = $model->id;
               $this->pFirstName =$model->first_name;
               $this->pMiddleName =$model->middle_name;
@@ -47,7 +50,7 @@ class PersonVO extends ValueObject
               $this->pGender = $model->gender_id;
               $this->pBloodGroup = $model->blood_group;
               $this->pPersonMobileDetails =$model['personMobile'];
-              $this->pPersonUserDetails =$model['user'];
+              $this->pPersonUserDetails =($model['user'])?$model['user']:False;
          }
     }
 

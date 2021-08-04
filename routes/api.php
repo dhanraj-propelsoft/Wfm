@@ -26,6 +26,8 @@ Route::post('wfmlogin', 'Entitlement\Controller\LoginController@login');
 Route::post('sendOtpForgetPassword', 'Common\Controller\CommonController@sendOtp');
 Route::post('OTPVerification', 'Common\Controller\CommonController@OTPVerification');
 Route::post('updatePassword', 'Common\Controller\CommonController@updatePassword');
+Route::post('createPersonTmpFile', 'Common\Controller\CommonController@createPersonTmpFile');
+Route::post('getTmpPersonFile', 'Common\Controller\CommonController@getTmpPersonFile');
 
 
 //Ended Peron Related Api By Dhana

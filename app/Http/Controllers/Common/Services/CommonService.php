@@ -45,7 +45,10 @@ class CommonService
        }
         public function createPersonTmpFile($datas)
         {
+            $otp = pGenarateOTP(4);
+            $datas['otp'] = $otp;
             $data = (object)$datas;
+
             $fileName = $data->mobile_no.".json";
             $encodedData = json_encode($datas);
 

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Log;
 use Session;
 use DB;
 use App\Person;
+use App\Http\Controllers\Common\Model\PersonMobile;
+use App\Http\Controllers\Common\Model\PersonEmail;
 use App\User;
 
 
@@ -31,6 +33,70 @@ class CommonRepository
 //           }
 
           return $datass;
+     }
+
+     
+     public function getpersonIdByMobileNo($mobile_no)
+     {
+
+        $query = PersonMobile::where('mobile_no',$mobile_no)->first();
+
+
+        if($query != null){
+
+            return $query;
+
+        }else{
+            return false;
+        }
+
+        
+     }
+
+     public function get_account_list($mobile_no)
+     {
+
+        $query = PersonMobile::where('mobile_no',$mobile_no)->get();
+
+        return $query;
+
+
+        
+        
+     }
+
+     public function checkmailidByPersonId_and_email($personId,$email)
+     {
+
+        
+        $query = PersonEmail::where('person_id',$personId)
+                            ->where('email',$email)
+                            ->first();
+       
+
+        if($query != null){
+
+            return $query;
+
+        }else{
+            return false;
+        }
+
+
+
+        
+     }
+
+
+     public function findDataByPersonId($personId)
+     {
+        $query = Person::with('personMobile','user','personEmail')
+                ->where('id',$personId)
+                ->first();
+
+
+
+        return $query;
      }
      public function getUserDataByUserId($userId)
      {
@@ -83,4 +149,45 @@ class CommonRepository
                       }
 
                     }
+
+        public function signup($personModel,$personMobilemodel,$personEmailModel,$usermodel){
+                        
+            try {
+
+            $result = DB::transaction(function () use ($personModel,$personMobilemodel,$personEmailModel,$usermodel) {
+
+
+                $personModel->save();
+                
+                $personModel->personMobile()->save($personMobilemodel);
+
+                $personModel->personEmail()->save($personEmailModel);
+
+                $personModel->user()->save($usermodel);
+
+            // Log::info('TaskRepository->TaskSave:Success-'.json_encode($model));   
+                return [
+                    'status'=>1,
+                    'message'=>pStatusSuccess(),
+                    'data' => $personModel
+                ];
+            });
+           
+            return $result;
+        } catch (\Exception $e) { 
+
+            // Log::info('TaskRepository->TaskSave:Error-'.json_encode($e)); 
+
+            return [
+                'status'=>0,
+                'message' => $e,
+                'data' => ""
+            ];
+        }    
+
+
+        }
+
+
+
 }

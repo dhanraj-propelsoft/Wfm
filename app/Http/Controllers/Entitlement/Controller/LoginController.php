@@ -19,23 +19,53 @@ class LoginController extends Controller
 	public function login()
 	{
 
-//dd("done");
-		if(Auth::attempt(['mobile' => request('mobile'), 'password' => request('password'), 'status' => 1])) {
+		$result = $this->signin(request('mobile'),request('password'));
+
+
+
+		if($result['status'] == 1){
+
+			return response()->json($result['data'], $this->successStatus);
+		}else{
+			return response()->json(['status'=>0,'message'=>"Wrong Credentials"], $this->unauthorised);
+		}
+		
+	
+    }
+
+    public function signin($mobile_no,$password) {
+
+    	
+
+		if(Auth::attempt(['mobile' => $mobile_no, 'password' => $password, 'status' => 1])) {
 
 
 			$user = Auth::user();
 
-			$success['status'] = '1';
+			$success['status'] = 1;
 			$success['user'] =  $user;
 			$success['person_id'] =  $user->person_id;
 			$success['image'] =  "";
 			$success['token'] =  $user->createToken($user->name)->accessToken;
-			// $success['token'] =  Str::random(80);
 
-			$orgId = 0;
-			return response()->json($success, $this->successStatus);
+
+			$success['firstOrg'] =  0;
+
+			 $result = [
+				'status'=>1,
+				'data'=>$success
+			];
+
+
+			 return $result;
 		} else {
-			return response()->json(['status'=>'Wrong Credentials!'], $this->unauthorised);
+
+			$result = [
+				'status'=>0,
+				'data'=>"Wrong Credentials"
+			];
+
+			return $result;
 		}
-    }
+	}
 }

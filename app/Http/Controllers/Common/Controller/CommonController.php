@@ -52,4 +52,66 @@ class CommonController extends Controller
         return $datas;
     }
 
+    public function signup(Request $request)
+    {
+
+        Log::info('CommonController->Signup:-Inside '.json_encode($request->all()));
+        $Data = $this->service->signup($request->all());
+        Log::info('CommonController->Signup:-Return '.json_encode($Data));
+
+        return response()->json($Data);
+        
+    }
+
+     public function updatePassword_and_login(Request $request)
+    {
+        Log::info('CommonController->signin:-Inside ');
+        $Data = $this->service->updatePassword_and_login($request->all());
+        Log::info('CommonController->signin:-Return '.json_encode($Data));
+
+        return response()->json($Data);
+    }
+
+     public function persondetails(Request $request)
+    {
+
+        Log::info('CommonController->persondetails:-Inside ');
+        $Data = $this->service->persondetails($request->all());
+        Log::info('CommonController->persondetails:-Return '.json_encode($Data));
+
+        return response()->json($Data);
+    }
+
+    public function finddataByPersonId($personId)
+    {   
+
+        
+        Log::info('CommonController->finddataByPersonId:-Inside ');
+        $Data = $this->service->finddataByPersonId($personId);
+        Log::info('CommonController->finddataByPersonId:-Return '.json_encode($Data));
+
+        return response()->json($Data);
+    }
+
+    public function sendOtpPerson(Request $request)
+    {
+
+        Log::info('CommonController->sendOtpPerson:-Inside ');
+        $datas = $this->service->createPersonTmpFile($request->all());
+        Log::info('CommonController->sendOtpPerson:-Return');
+        return response()->json($datas);
+    }
+
+    public function get_account_list($mobileNo)
+    {
+            
+        Log::info('CommonController->get_account_list:-Inside ');
+        $datas = $this->service->get_account_list($mobileNo);
+        Log::info('CommonController->get_account_list:-Return');
+        return response()->json($datas);
+    }
+
+
+
+
 }

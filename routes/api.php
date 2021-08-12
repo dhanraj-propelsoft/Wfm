@@ -29,6 +29,17 @@ Route::post('updatePassword', 'Common\Controller\CommonController@updatePassword
 Route::post('createPersonTmpFile', 'Common\Controller\CommonController@createPersonTmpFile');
 Route::post('getTmpPersonFile', 'Common\Controller\CommonController@getTmpPersonFile');
 
+Route::post('SignUp', 'Common\Controller\CommonController@signup');
+Route::post('updatePassword_and_login', 'Common\Controller\CommonController@updatePassword_and_login');
+Route::post('get_persondetails', 'Common\Controller\CommonController@persondetails');
+
+Route::get('finddataByPersonId/{id}', 'Common\Controller\CommonController@finddataByPersonId');
+
+Route::post('sendOtpPerson', 'Common\Controller\CommonController@sendOtpPerson');
+
+Route::get('get_account_list/{mobile_no}', 'Common\Controller\CommonController@get_account_list');
+
+
 
 //Ended Peron Related Api By Dhana
 Route::get('get_state', 'Api\SignupController@get_state');

@@ -17,7 +17,9 @@ use App\Http\Controllers\Common\Repository\CommonRepository;
 use App\Notification\Service\SmsNotificationService;
 use Hash;
 use App\Http\Controllers\Common\Model\PersonVO;
+use App\Http\Controllers\Common\Model\PersonMobile;
 use App\Person;
+use App\Http\Controllers\Common\Model\PersonEmail;
 class CommonService
 {
 
@@ -34,7 +36,7 @@ class CommonService
 
        public function getPersonByParameter($mobileNo=false,$email = false,$person_id =false)
        {
-               $email = "smartdhana20@gmail.com";
+               // $email = "smartdhana20@gmail.com";
                $datas = $this->commonRepo->getPersonByParameters($mobileNo,$email);
 
                $entities = $this->convertToPersonVO($datas);
@@ -80,15 +82,18 @@ class CommonService
 
              if($datas['otp'] == $decodedData['otp'])
              {
-                $person = $this->savePerson($decodedData);
-                if($person['message'] == pStatusSuccess())
-                {
-                    $user = $this->saveUser($person['data']);
-                }
-                dd($response);
+                 
+                // $person = $this->savePerson($decodedData);
+                
+                // if($person['message'] == pStatusSuccess())
+                // {
+                //     // $user = $this->saveUser($person['data']);
+                // }
+                
                 $response = ['message' => pStatusSuccess(),'data' =>  "OTP MATCHED"];
              }else
              {
+                 
                 $response = ['message' => pStatusFailed(),'data' =>  "OTP Missmatched"];
              }
             return $response;
@@ -99,6 +104,198 @@ class CommonService
             $personModel = $this->convertToPersonModel($datas);
             $person =$this->commonRepo->savePerson($responseData);
             return $person;
+        }
+
+        public function get_account_list($mobileNo)
+        {
+           
+           $PersonAccountList = $this->commonRepo->get_account_list($mobileNo);
+
+
+            $PersonVos = collect($PersonAccountList)->map(function ($personMobile){
+
+              $model = $this->finddataByPersonId($personMobile->person_id);
+
+              $personVo = $this->convertToPersonVO($model['data']);
+                
+                return $personVo;
+             
+            });
+
+            return[
+                'status'=>1,
+                'data'=>$PersonVos
+            ];
+
+        }
+
+        public function signup($datas)
+        {
+            Log::info('CommonService->signup:-Inside '.json_encode($datas));
+
+
+            // $datas['pId'] = $;
+
+            $datas = (object)$datas;
+
+
+
+            $personModel = $this->convertToPersonModel($datas);
+
+
+
+
+
+            Log::info('CommonService->signup:-return personmodel'.json_encode($personModel));
+
+            $personMobileModel = $this->convertToPersonMobileModel($datas);
+
+                
+            Log::info('CommonService->signup:-return personMobileModel'.json_encode($personMobileModel));
+
+            $personEmailModel = $this->convertToPersonEmailModel($datas);
+
+            Log::info('CommonService->signup:-return personEmailModel'.json_encode($personEmailModel));
+
+            $userModel = $this->convertToUserModel($datas);
+
+            Log::info('CommonService->signup:-return UserModel'.json_encode($userModel));
+
+
+
+            $result =$this->commonRepo->signup($personModel,$personMobileModel,$personEmailModel,$userModel);
+
+            Log::info('CommonService->signup:-return Signup'.json_encode($result));
+
+
+
+            if($result['status']){
+
+
+                $res = app('App\Http\Controllers\Entitlement\Controller\LoginController')->signin($datas->mobile,$datas->password);
+
+                Log::info('CommonService->signup:-return Signin'.json_encode($res));
+
+                    if($res['status'] == 1){
+
+                    Log::info('CommonService->signup:-return Success'.json_encode($res));
+
+                         return $res;
+
+
+
+                    }else{
+
+                    Log::info('CommonService->signup:-return failed');
+
+                        return response()->json(['status'=>'Contact Admin!'], $this->unauthorised);
+
+                    }
+
+        
+            } 
+
+        }
+
+        public function updatePassword_and_login($data){
+
+            
+            $data =(object)$data;
+           
+            $userModel = $this->commonRepo->getUserDataByUserId($data->userId);
+
+            $userModel->password = Hash::make($data->password);
+
+            $userResponse = $this->commonRepo->saveUser($userModel);
+           
+           
+           if ($userResponse['message'] == pStatusSuccess())
+           {
+
+
+            $res = app('App\Http\Controllers\Entitlement\Controller\LoginController')->signin($userModel->mobile,$data->password);
+
+            
+            Log::info('CommonService->signup:-return Signin'.json_encode($res));
+
+            if($res['status'] == 1){
+
+            Log::info('CommonService->signup:-return Success'.json_encode($res));
+
+                 return $res;
+           }
+           else
+            {
+               return [
+                'status'=>0,
+                'message'=>'Wrong Credentials,contact admin'
+               ];
+            }
+        }
+        else{
+
+            return [
+                'status'=>0,
+                'message'=>'password updated failed,contact admin'
+               ];
+        }
+
+        
+    }
+        public function persondetails($data){
+
+            $data =(object)$data;
+
+            $personIdByMobileNo = $this->commonRepo->getpersonIdByMobileNo($data->mobileNo);
+
+            
+
+            if($personIdByMobileNo){
+
+                
+                $conform_personId = $this->commonRepo->checkmailidByPersonId_and_email($personIdByMobileNo->id,$data->email);
+
+                if($conform_personId){
+
+                    $res = $this->commonRepo->findDataByPersonId($conform_personId->person_id);
+ 
+
+                    return [
+                        'status'=>1,
+                        'data'=>$res
+                    ];
+                }else{
+
+                    return [
+                        'status'=>0,
+                        'message'=>'MobileNo and Email does not matched any persons'
+                    ];
+
+                }
+
+            }else{
+
+                    return [
+                        'status'=>0,
+                        'message'=>'Mobile does not matched any persons'
+                    ];
+
+            }
+            
+
+            // return $res;
+
+        }
+        
+        public function finddataByPersonId($id)
+        {
+               
+               $res = $this->commonRepo->findDataByPersonId($id);
+
+                return [
+                        'status'=>1,
+                        'data'=>$res
+                    ];
         }
         public function saveUser($datas)
         {
@@ -116,7 +313,7 @@ class CommonService
            }
            else
            {
-            $model =new Person;
+            $model = new Person;
            }
 
            $model->salutation  = $datas->salutation;
@@ -125,30 +322,57 @@ class CommonService
            $model->last_name = $datas->last_name;
            $model->alias = $datas->alias;
            $model->dob = $datas->dob;
-           $model->father_name = $datas->father_name;
-           $model->mother_name = $datas->mother_name;
-           $model->pan_no = $datas->pan_no;
+           // $model->father_name = $datas->father_name;
+           // $model->mother_name = $datas->mother_name;
+           // $model->pan_no = $datas->pan_no;
            $model->gender_id = $datas->gender_id;
            $model->blood_group_id = $datas->blood_group_id;
-           $model->country_id = $datas->country_id;
-           $model->status_id = $datas->status_id;
+           // $model->country_id = $datas->country_id;
+           // $model->status_id = $datas->status_id;
 
            return $model;
         }
+        public function convertToPersonMobileModel($datas)
+        {
+
+           
+            $model = new PersonMobile;
+
+            $model->mobile_no = $datas->mobile;
+
+            return $model;
+
+
+        }
+
+        public function convertToPersonEmailModel($datas)
+        {
+
+                
+            $model = new PersonEmail;
+
+            $model->email = $datas->email;
+
+            return $model;
+
+
+        }
         public function convertToUserModel($datas)
         {
-              $model =new User;
-              $model->name = $datas->name;
+
+                
+              $model = new User;
+              $model->name = $datas->first_name.' '.$datas->middle_name.' '.$datas->last_name;
               $model->mobile = $datas->mobile;
               $model->email = $datas->email;
-              $model->password =$datas->person_id;
-              $model->person_id =$datas->person_id;
+              $model->password =Hash::make($datas->password);
+              // $model->person_id =$datas->person_id;
               $model->otp =$datas->otp;
-              $model->otp_time = $datas->otp_time;
-              $model->otp_sent = $datas->otp_sent;
-              $model->is_active = $datas->is_active;
-              $model->status = $datas->status;
-              $model->remember_token = $datas->remember_token;
+              // $model->otp_time = $datas->otp_time;
+              // $model->otp_sent = $datas->otp_sent;
+              // $model->is_active = $datas->is_active;
+              $model->status = 1;
+              // $model->remember_token = $datas->remember_token;
               return $model;
         }
 
@@ -226,6 +450,8 @@ class CommonService
                return $userResponse;
             }
       }
+
+
       public function passwordValidation($data)
       {
          $rule=['new_password' => ['required'],'new_confirm_password' => ['same:new_password']];
@@ -238,6 +464,7 @@ class CommonService
           {
 
               $vo = new PersonVO($model);
+
               return $vo;
           }
 

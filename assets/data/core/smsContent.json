@@ -1,0 +1,8 @@
+
+    {
+	   	 "estimation_aknowledgement":"Hello {name}!,Estimate({estimationNo}) for Vechicle No {vechicleNo} is avaiable for your review/approval. Click link for details, {url}",
+
+         "invoice_aknowledgement": "Hello {name}!,Invoice({invoiceNo}) for Vechicle No {vechicleNo} is avaiable for your review/approval. Click link for details, {url}",
+      "UserVerificationOTP": "Hi!Your OTP IS {otp}"
+    }
+

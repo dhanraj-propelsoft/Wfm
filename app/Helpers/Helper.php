@@ -588,4 +588,27 @@ if (!function_exists('pGenarateOTP')) {
         return $value;
     }
 }
+function pSmsParser($type, $params = false)
+    {
+        $file = file_get_contents(base_path('assets/data/core/smsContent.json'));
+        $smsContents = json_decode($file, true);
+
+        Log::info('Helper->pSmsParser :- get requested SmsParser - ' . json_encode($smsContents));
+
+        $smsContent = $smsContents[$type];
+
+        if ($params && $smsContent) {
+            foreach ($params as $key => $data) {
+                Log::info('Helper->pSmsParser :- param key - ' . $key);
+                Log::info('Helper->pSmsParser :- param value - ' . $data);
+                $smsContent = str_replace($key, $data, $smsContent);
+                Log::info('Helper->pSmsParser:- param value applied to the alert - ' . $smsContent);
+            }
+        }
+        if ($smsContent) {
+            return $smsContent;
+        } else {
+            return false;
+        }
+    }
 ?>

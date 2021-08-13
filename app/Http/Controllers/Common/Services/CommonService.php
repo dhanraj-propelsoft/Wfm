@@ -47,11 +47,15 @@ class CommonService
        }
         public function createPersonTmpFile($datas)
         {
+
+
             $otp = pGenarateOTP(4);
             $datas['otp'] = $otp;
             $data = (object)$datas;
+            $mobileNo = $data->mobile_no;
+            $name = $data->first_name;
+            $fileName = $mobileNo.".json";
 
-            $fileName = $data->mobile_no.".json";
             $encodedData = json_encode($datas);
 
             //find file name
@@ -63,7 +67,19 @@ class CommonService
              // create temp file
              if(Storage::disk('local')->put($fileName, $encodedData))
              {
-                $response = ['message' => pStatusSuccess(),'data' =>  "Validate OTP"];
+                    $subject = "User verification";
+                    $smsContent = pSmsParser('UserVerificationOTP', ['{otp}' => $otp]);
+
+                    $smsNotifyModel = $this->smsNotifyService->save($mobileNo, $subject, $name, $smsContent,"", "OTP");
+                    if($smsNotifyModel['message'] == pStatusSuccess())
+                    {
+                        $response = ['message' => pStatusSuccess(),'data' =>  "Validate OTP"];
+
+                    }else
+                    {
+                        $response = ['message' => pStatusFailed(),'data' =>  "Something Went wrong Please recreate"];
+                    }
+
              }
              else
              {

@@ -39,6 +39,9 @@ Route::post('sendOtpPerson', 'Common\Controller\CommonController@sendOtpPerson')
 
 Route::get('get_account_list/{mobile_no}', 'Common\Controller\CommonController@get_account_list');
 
+Route::post('sendotp_email', 'Common\Controller\CommonController@sendotp_email');
+
+Route::post('verifiy_email_otp', 'Common\Controller\CommonController@verifiy_email_otp');
 
 
 //Ended Peron Related Api By Dhana

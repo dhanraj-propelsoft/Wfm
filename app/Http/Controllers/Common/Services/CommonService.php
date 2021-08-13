@@ -15,6 +15,7 @@ use App\User;
 use Carbon\Carbon;
 use App\Http\Controllers\Common\Repository\CommonRepository;
 use App\Notification\Service\SmsNotificationService;
+use App\Notification\Service\EmailNotificationService;
 use Hash;
 use App\Http\Controllers\Common\Model\PersonVO;
 use App\Http\Controllers\Common\Model\PersonMobile;
@@ -26,10 +27,11 @@ class CommonService
         /**
          * * To connect Repo **
          */
-        public function __construct(SmsNotificationService $smsNotifyService,CommonRepository $commonRepo)
+        public function __construct(SmsNotificationService $smsNotifyService,CommonRepository $commonRepo,EmailNotificationService $emailNotifiyService)
         {
             $this->commonRepo = $commonRepo;
             $this->smsNotifyService = $smsNotifyService;
+            $this->emailNotifiyService = $emailNotifiyService;
         }
 
 
@@ -211,6 +213,73 @@ class CommonService
         
             } 
 
+        }
+        public function sendotp_email($request)
+       {
+            
+            
+            $otp = pGenarateOTP(4);
+            $request['otp'] = $otp;
+
+            $data = (object)$request;
+
+            $email_content = $otp ." is the OTP for logging in to your Propel Account.keep the OTP safe.we will never call to ask for your OTP.";
+            
+            $emailNotifyResponse = $this->emailNotifiyService->save($data->email_id, "OTP", $data->name, $email_content, " ", "");
+
+            if($emailNotifyResponse['message'] == "SUCCESS"){
+            
+                $fileName = $data->email_id.".json";
+                $encodedData = json_encode($data);
+               
+                // create temp file
+             if(Storage::disk('local')->put($fileName, $encodedData))
+             {
+                return [
+                    'status'=>1,
+                    'message'=>"OTP has been send Successfully."
+                ];
+             }else{
+                return [
+                    'status'=>0,
+                    'message'=>"Json file did not saved.Contact Admin."
+                ];
+             }
+            }else{
+                return [
+                    'status'=>0,
+                    'message'=>"OTP did not send,Contact Admin."
+                ];
+            }
+            
+
+
+
+       }
+         public function verifiy_email_otp($datas)
+        {
+             $data = (object)$datas;
+             $fileName = $data->email_id.".json";
+             $getFile = Storage::disk('local')->get($fileName);
+             $decodedData = json_decode ($getFile, true);
+
+             if($datas['otp'] == $decodedData['otp'])
+             {
+                 
+                // $person = $this->savePerson($decodedData);
+                
+                // if($person['message'] == pStatusSuccess())
+                // {
+                //     // $user = $this->saveUser($person['data']);
+                // }
+                
+                $response = ['message' => pStatusSuccess(),'data' =>  "OTP MATCHED"];
+             }else
+             {
+                 
+                $response = ['message' => pStatusFailed(),'data' =>  "OTP Missmatched"];
+             }
+            return $response;
         }
 
         public function updatePassword_and_login($data){

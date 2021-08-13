@@ -36,6 +36,11 @@ class CommonController extends Controller
         $datas = $this->service->OTPVerification($request->all());
         return $datas;
     }
+    public function verifiy_email_otp(Request $request)
+    {
+        $datas = $this->service->verifiy_email_otp($request->all());
+        return $datas;
+    }
     public function updatePassword(Request $request)
     {
        $datas = $this->service->updatePassword($request->all());
@@ -108,6 +113,14 @@ class CommonController extends Controller
         Log::info('CommonController->get_account_list:-Inside ');
         $datas = $this->service->get_account_list($mobileNo);
         Log::info('CommonController->get_account_list:-Return');
+        return response()->json($datas);
+    }
+
+    public function sendotp_email(Request $request)
+    {
+        Log::info('CommonController->sendotp_email:-Inside ');
+        $datas = $this->service->sendotp_email($request->all());
+        Log::info('CommonController->sendotp_email:-Return');
         return response()->json($datas);
     }
 

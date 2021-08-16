@@ -55,7 +55,7 @@ class CommonService
             $datas['otp'] = $otp;
             $data = (object)$datas;
             $mobileNo = $data->mobile_no;
-            $name = $data->first_name;
+            $name = "Ajith";
             $fileName = $mobileNo.".json";
 
             $encodedData = json_encode($datas);
@@ -93,27 +93,25 @@ class CommonService
         }
         public function getTmpPersonFile($datas)
         {
+            Log::info('CommonService->signup:-Inside '.json_encode($datas));
+
              $data = (object)$datas;
+
              $fileName = $data->mobile_no.".json";
              $getFile = Storage::disk('local')->get($fileName);
              $decodedData = json_decode ($getFile, true);
 
              if($datas['otp'] == $decodedData['otp'])
              {
-                 
-                // $person = $this->savePerson($decodedData);
+                $response = ['message' => pStatusSuccess(),'data' =>  "OTP MATCHED"];  
                 
-                // if($person['message'] == pStatusSuccess())
-                // {
-                //     // $user = $this->saveUser($person['data']);
-                // }
-                
-                $response = ['message' => pStatusSuccess(),'data' =>  "OTP MATCHED"];
              }else
              {
                  
                 $response = ['message' => pStatusFailed(),'data' =>  "OTP Missmatched"];
              }
+            Log::info('CommonService->signup:-Return '.json_encode($response));
+
             return $response;
         }
         public function savePerson($datas)
@@ -129,16 +127,17 @@ class CommonService
            
            $PersonAccountList = $this->commonRepo->get_account_list($mobileNo);
 
-
+           // dd($PersonAccountList);
             $PersonVos = collect($PersonAccountList)->map(function ($personMobile){
 
-              $model = $this->finddataByPersonId($personMobile->person_id);
-
-              $personVo = $this->convertToPersonVO($model['data']);
-                
-                return $personVo;
+              $personVo = $this->finddataByPersonId($personMobile->person_id);
+                // dd($model);
+              // $personVo = $this->convertToPersonVO($model['data']);
+                // dd($personVo);
+                return $personVo['data'];
              
             });
+            
 
             return[
                 'status'=>1,
@@ -152,15 +151,12 @@ class CommonService
             Log::info('CommonService->signup:-Inside '.json_encode($datas));
 
 
-            // $datas['pId'] = $;
 
             $datas = (object)$datas;
 
-
+           
 
             $personModel = $this->convertToPersonModel($datas);
-
-
 
 
 
@@ -174,8 +170,9 @@ class CommonService
             $personEmailModel = $this->convertToPersonEmailModel($datas);
 
             Log::info('CommonService->signup:-return personEmailModel'.json_encode($personEmailModel));
-
-            $userModel = $this->convertToUserModel($datas);
+            
+                $userModel = $this->convertToUserModel($datas);
+            
 
             Log::info('CommonService->signup:-return UserModel'.json_encode($userModel));
 
@@ -185,9 +182,9 @@ class CommonService
 
             Log::info('CommonService->signup:-return Signup'.json_encode($result));
 
+            
 
-
-            if($result['status']){
+              if($result['status'] == 1){
 
 
                 $res = app('App\Http\Controllers\Entitlement\Controller\LoginController')->signin($datas->mobile,$datas->password);
@@ -211,7 +208,10 @@ class CommonService
                     }
 
         
-            } 
+            }   
+           
+
+            
 
         }
         public function sendotp_email($request)
@@ -377,9 +377,14 @@ class CommonService
                
                $res = $this->commonRepo->findDataByPersonId($id);
 
+               
+               $personVo = $this->convertToPersonVO($res);
+
+              
+
                 return [
                         'status'=>1,
-                        'data'=>$res
+                        'data'=>$personVo
                     ];
         }
         public function saveUser($datas)
@@ -392,12 +397,15 @@ class CommonService
 
         public function convertToPersonModel($datas)
         {
+           
            if($datas->pId)
            {
+         
              $model = Person::findOrFail($datas->pId);
            }
            else
            {
+         
             $model = new Person;
            }
 
@@ -420,8 +428,14 @@ class CommonService
         public function convertToPersonMobileModel($datas)
         {
 
-           
+           if($datas->pId)
+           {
+             $model = PersonMobile::where('person_id',$datas->pId)->first();
+           }
+           else
+           {
             $model = new PersonMobile;
+           }
 
             $model->mobile_no = $datas->mobile;
 
@@ -433,8 +447,15 @@ class CommonService
         public function convertToPersonEmailModel($datas)
         {
 
-                
+           if($datas->pId)
+           {
+             $model = PersonEmail::where('person_id',$datas->pId)->first();
+           }
+           else
+           {
             $model = new PersonEmail;
+           }
+            
 
             $model->email = $datas->email;
 

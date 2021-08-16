@@ -8,6 +8,8 @@ class PersonVO extends ValueObject
 {
     public $pId;
 
+    public $pSalutionId;
+
     public $pFirstName;
 
     public $pMiddleName;
@@ -46,6 +48,8 @@ class PersonVO extends ValueObject
 
           $this->pId = '';
 
+          $this->pSalutionId = '';
+
           $this->pFirstName ='';
 
           $this->pMiddleName = '';
@@ -78,19 +82,21 @@ class PersonVO extends ValueObject
            
               $this->pId = $model->id;
 
+              $this->pSalutionId = $model->salutation;
+
               $this->pFirstName =$model->first_name;
 
               $this->pMiddleName =$model->middle_name;
 
               $this->pLastName = $model->last_name;
 
-              $this->pAlias= $model->alias;
+              $this->pAlias= ($model->alias)?$model->alias:"";
 
               $this->pDob = $model->dob;
 
-              $this->pGender = $model->gender_id;
+              $this->pGender = ($model->gender_id)?$model->gender_id:"";
 
-              $this->pBloodGroup = $model->blood_group;
+              $this->pBloodGroup = ($model->blood_group)?$model->blood_group:"";
 
               $this->pPersonMobileDetails =$model['personMobile'];
 

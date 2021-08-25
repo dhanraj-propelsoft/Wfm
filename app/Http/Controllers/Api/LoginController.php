@@ -25,54 +25,70 @@ class LoginController extends Controller
 		Log::info('API_LoginController->login :- Login request received for mobile number : '.request('mobile'));
 		Log::info('API_LoginController->login :- Login request received for PassWord : '.request('password'));
 		
-		if(Auth::attempt(['mobile' => request('mobile'), 'password' => request('password'), 'status' => 1])) {
 
 
+		
+
+		
+
+	}
+
+	public function signin($mobile_no,$password) {
+
+		if(Auth::attempt(['mobile' => $mobile_no, 'password' => $password, 'status' => 1])) {
+
+			
 			$user = Auth::user();
 
+
+			// dd($user->name);
 			$success['status'] = '1';
 			$success['user'] =  $user;
 			$success['person_id'] =  $user->person_id;
-			$success['hrm_employee_id'] =  HrmEmployee::where('person_id',$user->person_id)->first()->id;
-			$success['propelId'] = Person::find($user->person_id)->crm_code;
-			$success['image'] =  "";
-			$success['token'] =  $user->createToken($user->name)->accessToken;
-			// $success['token'] =  Str::random(80);
+
+			// $success['hrm_employee_id'] =  HrmEmployee::where('person_id',$user->person_id)->first()->id;
+			// $success['propelId'] = Person::find($user->person_id)->crm_code;
+			// $success['image'] =  "";
+			// $success['token'] =  $user->createToken($user->name)->accessToken;
+			// dd($success);
+			// // $success['token'] =  Str::random(80);
 			
-			$organization = Organization::select('organizations.*');
-			$organization->leftJoin('organization_person', 'organizations.id', '=', 'organization_person.organization_id');
-			$organization->leftJoin('persons', 'persons.id', '=', 'organization_person.person_id');
-			$organization->leftJoin('module_organization', 'module_organization.organization_id', '=', 'organizations.id');
-			$organization->leftJoin('modules', 'module_organization.module_id', '=', 'modules.id');
-			$organization->where('persons.id', $user->person_id);
-			$organization->where('modules.name', "wfm");
-			$organizations = $organization->groupBy('organizations.id')->get();
+			// $organization = Organization::select('organizations.*');
+			// $organization->leftJoin('organization_person', 'organizations.id', '=', 'organization_person.organization_id');
+			// $organization->leftJoin('persons', 'persons.id', '=', 'organization_person.person_id');
+			// $organization->leftJoin('module_organization', 'module_organization.organization_id', '=', 'organizations.id');
+			// $organization->leftJoin('modules', 'module_organization.module_id', '=', 'modules.id');
+			// $organization->where('persons.id', $user->person_id);
+			// $organization->where('modules.name', "wfm");
+			// $organizations = $organization->groupBy('organizations.id')->get();
 
-			$orgId = 0;
-			if(count($organizations) > 0){
-				$orgId = $organizations[0]->id;
+			// $orgId = 0;
+			// if(count($organizations) > 0){
+			// 	$orgId = $organizations[0]->id;
 
-			// 
+			// //
 
-			$res = collect($organizations)->map(function ($model)  {
+			// $res = collect($organizations)->map(function ($model)  {
 
            
-                    $update = Organization::findOrFail($model['id']);
-                    $update->is_active = 0;
-                    $update->save();
+   //                  $update = Organization::findOrFail($model['id']);
+   //                  $update->is_active = 0;
+   //                  $update->save();
 
-                    return $update;   
-            	});
+   //                  return $update;   
+   //          	});
 
-                  $futureorg = Organization::findOrFail($orgId);
-                  $futureorg->is_active = 1;
-                  $futureorg->save();	
-			}
-			$success['firstOrg'] =  $orgId;
+   //                $futureorg = Organization::findOrFail($orgId);
+   //                $futureorg->is_active = 1;
+   //                $futureorg->save();	
+			// }
+			// // $success['firstOrg'] =  $orgId;
+			$success['firstOrg'] =  0;
+
 			
-			Log::info('API_LoginController->login :- Login request received for PassWord : '.$success['firstOrg']);
+			// Log::info('API_LoginController->login :- Login request received for PassWord : '.$success['firstOrg']);
 			
-			
+				
 			return response()->json($success, $this->successStatus);
 		} else {
 			return response()->json(['status'=>'Wrong Credentials!'], $this->unauthorised);

@@ -10,7 +10,10 @@ use DB;
 use App\Person;
 use App\Http\Controllers\Common\Model\PersonMobile;
 use App\Http\Controllers\Common\Model\PersonEmail;
+use App\AdminModel\Salutation;
+use App\Gender;
 use App\User;
+use App\BloodGroup;
 
 
 class CommonRepository
@@ -49,6 +52,34 @@ class CommonRepository
         }else{
             return false;
         }
+
+        
+     }
+     public function findAllSalutations()
+     {
+
+       $query =  Salutation::get();
+
+       return $query;
+
+        
+     }
+     public function findAllGender()
+     {
+
+       $query =  Gender::get();
+
+       return $query;
+
+        
+     }
+
+     public function findAllBloodGroups()
+     {
+
+       $query =  BloodGroup::get();
+
+       return $query;
 
         
      }
@@ -162,8 +193,9 @@ class CommonRepository
                 $personModel->personMobile()->save($personMobilemodel);
 
                 $personModel->personEmail()->save($personEmailModel);
-
+                if($usermodel){
                 $personModel->user()->save($usermodel);
+                }
 
             // Log::info('TaskRepository->TaskSave:Success-'.json_encode($model));   
                 return [

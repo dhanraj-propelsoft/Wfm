@@ -59,9 +59,13 @@ class CommonController extends Controller
 
     public function signup(Request $request)
     {
+        $userModel = false;
+        if($request->password){
+            $userModel = true;
+        }
 
         Log::info('CommonController->Signup:-Inside '.json_encode($request->all()));
-        $Data = $this->service->signup($request->all());
+        $Data = $this->service->signup($request->all(),$userModel);
         Log::info('CommonController->Signup:-Return '.json_encode($Data));
 
         return response()->json($Data);

@@ -36,6 +36,14 @@ class PersonVO extends ValueObject
 
     Public $pHavingUser;
 
+    Public $pSalutionList;
+
+    Public $pGenderList;
+
+    Public $pBloodGroupsList;
+
+
+
 
 
     public function __construct($model = false)
@@ -82,11 +90,11 @@ class PersonVO extends ValueObject
            
               $this->pId = $model->id;
 
-              $this->pSalutionId = $model->salutation;
+              $this->pSalutionId = ($model->salutation)?$model->salutation:"";
 
               $this->pFirstName =$model->first_name;
 
-              $this->pMiddleName =$model->middle_name;
+              $this->pMiddleName =($model->middle_name)?$model->middle_name:"";
 
               $this->pLastName = $model->last_name;
 
@@ -96,7 +104,7 @@ class PersonVO extends ValueObject
 
               $this->pGender = ($model->gender_id)?$model->gender_id:"";
 
-              $this->pBloodGroup = ($model->blood_group)?$model->blood_group:"";
+              $this->pBloodGroup = ($model->blood_group_id)?$model->blood_group_id:"";
 
               $this->pPersonMobileDetails =$model['personMobile'];
 
@@ -106,6 +114,20 @@ class PersonVO extends ValueObject
 
               $this->pHavingUser = ($model['user'])?true:false;
          }
+    }
+
+    public function setSalutationsList($items)
+    {
+        return $this->pSalutionList = $items;
+    }
+    public function setGenderList($items)
+    {
+        return $this->pGenderList = $items;
+    }
+
+    public function setBloodGroupList($items)
+    {
+        return $this->pBloodGroupsList = $items;
     }
 
 }

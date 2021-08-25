@@ -55,7 +55,7 @@ class CommonService
             $datas['otp'] = $otp;
             $data = (object)$datas;
             $mobileNo = $data->mobile_no;
-            $name = "Ajith";
+            $name = $data->first_name;
             $fileName = $mobileNo.".json";
 
             $encodedData = json_encode($datas);
@@ -127,13 +127,13 @@ class CommonService
            
            $PersonAccountList = $this->commonRepo->get_account_list($mobileNo);
 
-           // dd($PersonAccountList);
+           
             $PersonVos = collect($PersonAccountList)->map(function ($personMobile){
 
               $personVo = $this->finddataByPersonId($personMobile->person_id);
-                // dd($model);
-              // $personVo = $this->convertToPersonVO($model['data']);
-                // dd($personVo);
+
+              
+
                 return $personVo['data'];
              
             });
@@ -146,18 +146,28 @@ class CommonService
 
         }
 
-        public function signup($datas)
+        public function signup($datas,$userModel)
         {
+                
             Log::info('CommonService->signup:-Inside '.json_encode($datas));
 
 
+            // OTP Verfied
+            $otpValidate = $this->getTmpPersonFile($datas);
+
+            if($otpValidate['message'] == pStatusSuccess()){
+
+                if($datas['pId'] == "false"){
+                    $datas['pId'] = false;
+                }
 
             $datas = (object)$datas;
+            
 
            
 
             $personModel = $this->convertToPersonModel($datas);
-
+            
 
 
             Log::info('CommonService->signup:-return personmodel'.json_encode($personModel));
@@ -170,8 +180,15 @@ class CommonService
             $personEmailModel = $this->convertToPersonEmailModel($datas);
 
             Log::info('CommonService->signup:-return personEmailModel'.json_encode($personEmailModel));
+
+            if($userModel){
+
+               $userModel = $this->convertToUserModel($datas);  
+            }
             
-                $userModel = $this->convertToUserModel($datas);
+            
+            
+           
             
 
             Log::info('CommonService->signup:-return UserModel'.json_encode($userModel));
@@ -180,14 +197,20 @@ class CommonService
 
             $result =$this->commonRepo->signup($personModel,$personMobileModel,$personEmailModel,$userModel);
 
+            if($userModel != true){
+                return [
+                    'message'=>pStatusSuccess(),
+                    'data'=>$personModel
+                ];
+            }
+
             Log::info('CommonService->signup:-return Signup'.json_encode($result));
 
-            
+        
+            if($result['status'] == 1){
 
-              if($result['status'] == 1){
 
-
-                $res = app('App\Http\Controllers\Entitlement\Controller\LoginController')->signin($datas->mobile,$datas->password);
+                $res = app('App\Http\Controllers\Entitlement\Controller\LoginController')->signin($datas->mobile_no,$datas->password);
 
                 Log::info('CommonService->signup:-return Signin'.json_encode($res));
 
@@ -195,9 +218,7 @@ class CommonService
 
                     Log::info('CommonService->signup:-return Success'.json_encode($res));
 
-                         return $res;
-
-
+                         return $res['data'];
 
                     }else{
 
@@ -205,14 +226,15 @@ class CommonService
 
                         return response()->json(['status'=>'Contact Admin!'], $this->unauthorised);
 
-                    }
-
-        
+                    }        
             }   
+
+            }else{
+
+                return $otpValidate;
+            }
+
            
-
-            
-
         }
         public function sendotp_email($request)
        {
@@ -299,7 +321,7 @@ class CommonService
 
 
             $res = app('App\Http\Controllers\Entitlement\Controller\LoginController')->signin($userModel->mobile,$data->password);
-
+            
             
             Log::info('CommonService->signup:-return Signin'.json_encode($res));
 
@@ -307,7 +329,7 @@ class CommonService
 
             Log::info('CommonService->signup:-return Success'.json_encode($res));
 
-                 return $res;
+                 return $res['data'];
            }
            else
             {
@@ -377,10 +399,16 @@ class CommonService
                
                $res = $this->commonRepo->findDataByPersonId($id);
 
-               
-               $personVo = $this->convertToPersonVO($res);
+               $salutation = $this->commonRepo->findAllSalutations();
 
-              
+               $gender = $this->commonRepo->findAllGender();
+
+               $blood_groups = $this->commonRepo->findAllBloodGroups();
+
+
+               $personVo = $this->convertToPersonVO($res,$salutation,$gender,$blood_groups);
+
+                
 
                 return [
                         'status'=>1,
@@ -425,6 +453,7 @@ class CommonService
 
            return $model;
         }
+
         public function convertToPersonMobileModel($datas)
         {
 
@@ -437,7 +466,7 @@ class CommonService
             $model = new PersonMobile;
            }
 
-            $model->mobile_no = $datas->mobile;
+            $model->mobile_no = $datas->mobile_no;
 
             return $model;
 
@@ -466,10 +495,14 @@ class CommonService
         public function convertToUserModel($datas)
         {
 
-                
-              $model = new User;
+            
+                $model = new User;
+               
+
+
+          
               $model->name = $datas->first_name.' '.$datas->middle_name.' '.$datas->last_name;
-              $model->mobile = $datas->mobile;
+              $model->mobile = $datas->mobile_no;
               $model->email = $datas->email;
               $model->password =Hash::make($datas->password);
               // $model->person_id =$datas->person_id;
@@ -566,10 +599,13 @@ class CommonService
 
          return $validator;
       }
-      public function convertToPersonVO($model = false)
+      public function convertToPersonVO($model = false,$salutation = false,$gender = false,$blood_groups = false)
           {
 
               $vo = new PersonVO($model);
+              $vo->setSalutationsList($salutation);
+              $vo->setGenderList($gender);
+              $vo->setBloodGroupList($blood_groups);
 
               return $vo;
           }

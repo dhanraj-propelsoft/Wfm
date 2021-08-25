@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Wfm\Repository;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Wfm\Repository\ProjectMasterRepositoryInterface;
 use App\Http\Controllers\Wfm\Model\Category;
 use Illuminate\Support\Facades\Log;
 use Session;
 use DB;
 
 
-class CategoryRepository 
+class ProjectMasterRepository implements ProjectMasterRepositoryInterface
 {
   
 
@@ -46,30 +47,38 @@ class CategoryRepository
               
     }
  
-    public function save($model, $id = false)
+    public function save(Category $model, $id = false)
     {            
-       try {
-            
-            $result = DB::transaction(function () use ($model) {
+
+        try {
+            if($id == false){
+            $message = "Category ".pAddMessage();
+            }else{
+            $message ="Category ". pUpdateMessage();
+            }
+
+            $result = DB::transaction(function () use ($model,$message) {
                 $model->save();
 
-                return [
-                    'status' => 1,
-                    'message'=>pStatusSuccess(),
-                    'data' => $model
-                ];
+                // return [
+                //     'message'=>$message,
+                //     'data' => $model
+                // ];
+                return ['status' => 1, 
+                        'message' => $message, 
+                        'data' =>$model
+                       ];
             });
            
             return $result;
         } catch (\Exception $e) { 
-            return [
-                'status' => 0,
-                'message' =>pStatusFailed(),
-                'data' => $e
-            ];
+            
+            return ['status' => 0, 
+                    'message' => "Category Does not Save.Contact Propel Admin", 
+                    'data' =>""
+                    ];
         }
     }
-    
 
     
    

@@ -8,6 +8,7 @@ use App\Http\Controllers\Wfm\Repository\ProjectRepository;
 use App\Http\Controllers\Wfm\Repository\ProjectMasterRepository;
 use App\Http\Controllers\Wfm\Repository\HrmEmployeeRepository;
 use App\Http\Controllers\Organization\OrganizationRepository;
+use App\Http\Controllers\Wfm\Repository\CategoryRepository;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Wfm\Model\ProjectVo;
 use App\Http\Controllers\Wfm\Model\Project;
@@ -28,17 +29,20 @@ class ProjectService
      * * To connect Repo **
      */
     
-    public function __construct(ProjectRepository $repo,OrganizationRepository $orgRepo,HrmEmployeeRepository $hrmRepo,ProjectMasterRepository $projMasterRepo)
+    public function __construct(ProjectRepository $repo,OrganizationRepository $orgRepo,HrmEmployeeRepository $hrmRepo,CategoryRepository $cateRepo)
     {
         $this->repo = $repo;
         $this->orgRepo = $orgRepo;
         $this->hrmRepo = $hrmRepo;
-        $this->projMasterRepo = $projMasterRepo;
+        // $this->projMasterRepo = $projMasterRepo;
+        $this->cateRepo = $cateRepo;
     }
 
 
     public function findAll($orgId)
     {   
+
+       
         Log::info('ProjectService->findAll:-Inside ');
 
         // hard Core Org Id 53
@@ -110,7 +114,7 @@ class ProjectService
         
         $categoryData = null;
         if($projecData->category_id != null){
-            $categoryData = $this->projMasterRepo->findById($projecData->category_id);
+            $categoryData = $this->cateRepo->findById($projecData->category_id);
         }
 
         // $categoryDatas = $this->projMasterRepo->findById();
@@ -142,7 +146,7 @@ class ProjectService
 
         $employeeDatas = $this->hrmRepo->getEmployeeDatasByOrgId($orgId);
 
-        $categoryDatas = $this->projMasterRepo->findAll($orgId);
+        $categoryDatas = $this->cateRepo->findAll($orgId);
     
         
         $ProjectDetailsVO = $this->convertToVO($model = false,$id = false,$employeeDatas,$categoryDatas);
@@ -168,7 +172,7 @@ class ProjectService
        
       $employeeDatas = $this->hrmRepo->getEmployeeDatasByOrgId($orgId);
 
-      $categoryDatas = $this->projMasterRepo->findAll($orgId);
+      $categoryDatas = $this->cateRepo->findAll($orgId);
         
       $ProjectDetailsVO = $this->convertToVO($model,$id,$employeeDatas,$categoryDatas);
       
@@ -302,7 +306,7 @@ class ProjectService
         return $rule;
     }
 
-       public function statusChangeById($request)
+    public function statusChangeById($request)
         {   
         Log::info('ProjectService->statusChangeById:-Inside ');
 

@@ -1,7 +1,7 @@
 <?php
 
 // Category
-	Route::get('CategoryList/{id}', 'Wfm\Controller\CategoryController@index');
+	Route::get('CategoryList1/{id}', 'Wfm\Controller\CategoryController@index');
 
 	Route::get('CategoryCreate', 'Wfm\Controller\CategoryController@create');
 

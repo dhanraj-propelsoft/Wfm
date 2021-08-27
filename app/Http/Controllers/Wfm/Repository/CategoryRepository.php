@@ -51,7 +51,7 @@ class CategoryRepository
        try {
             
             $result = DB::transaction(function () use ($model) {
-                $model->save();
+                $model->save1();
 
                 return [
                     'status' => 1,

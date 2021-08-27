@@ -1,6 +1,6 @@
 <?php
 
-Route::post('business_store', 'Organization\Controller\OrganizationController@store');
+Route::post('organization_store', 'Organization\Controller\OrganizationController@store');
 
 Route::get('business_edit/{id}', 'Organization\Controller\OrganizationController@findById');
 

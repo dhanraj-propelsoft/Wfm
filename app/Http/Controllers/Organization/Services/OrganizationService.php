@@ -90,7 +90,7 @@ class OrganizationService
         {  
                 Log::info('OrganizationService->validator: Inside'.json_encode($data));
                                 
-                $rule = [ 'org_name' => 'required','org_category_id'=>'required','org_ownership_id'=>'required'];
+                $rule = [ 'pOrganizationName' => 'required','pCategoryId'=>'required','pOwnershipId'=>'required'];
                 Log::info('OrganizationService->validator: Return'.json_encode($rule));
 
                 return $rule;
@@ -111,11 +111,11 @@ class OrganizationService
                 // {
                     $model = new Organization;
                 // } 
-                $model->organization_name = $data->org_name;
-                $model->unit_name = $data->unit_name;
-                $model->alias = $data->alias;
-                $model->organization_category_id = $data->org_category_id;
-                $model->organization_ownership_id = $data->org_ownership_id;
+                $model->organization_name = $data->pOrganizationName;
+                $model->unit_name = $data->pUnitName;
+                $model->alias = $data->pAlias;
+                $model->organization_category_id = $data->pCategoryId;
+                $model->organization_ownership_id = $data->pOwnershipId;
 
                  return $model;
         }

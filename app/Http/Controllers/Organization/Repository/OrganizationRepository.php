@@ -13,6 +13,15 @@ class OrganizationRepository
 {
     
 
+    public function findAll()
+    {   
+
+       Log::info('ProjectMasterRepository->findAll:-Inside ');
+        $result =  Organization::with('OrganizationAddress','OrganizationCategory','OrganizationOwnership')->get();
+       Log::info('ProjectMasterRepository->findAll:-Return '. json_encode($result));
+       return $result;
+        
+    }
     public function save($model)
     { 
 

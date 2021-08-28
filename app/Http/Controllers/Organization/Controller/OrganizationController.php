@@ -21,6 +21,15 @@ class OrganizationController extends Controller
     }
 
 
+    public function findAll()
+    {         
+        
+       Log::info('OrganizationController->findAll:-Inside ');
+        $data = $this->service->findAll();
+       Log::info('OrganizationController->findAll:-Inside ');
+       return response()->json($data);
+      
+    }
     public function findById($id)
     {         
         

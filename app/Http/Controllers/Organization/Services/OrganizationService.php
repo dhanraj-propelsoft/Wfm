@@ -13,6 +13,7 @@ use Auth;
 use App\User;
 use Carbon\Carbon;
 use App\Http\Controllers\Organization\Model\Organization;
+use App\Http\Controllers\Organization\Model\OrganizationVO;
 use Hash;
 use App\Http\Controllers\Organization\Repository\OrganizationRepository;
 
@@ -28,7 +29,26 @@ class OrganizationService
         }
 
 
+        public function findAll()
+        {   
+        
+       
 
+        Log::info('ProjectMasterService->findAll:-Inside');
+
+
+        $models = $this->repo->findAll();
+
+
+        $entities = collect($models)->map(function ($model) {
+            
+            return $this->convertToVO($model);
+        });
+        
+
+         return ['status' => 1, 'message' => 'Category Data has been get Successfully!' ,'data' =>$entities];
+       
+    }
         public function save($request)
         {  
           Log::info('OrganizationService->save:-Inside '.json_encode($request));
@@ -85,7 +105,13 @@ class OrganizationService
        
         }
 
-        
+        public function convertToVO($model = false)
+        {
+       
+            $vo = new OrganizationVO($model);  
+       
+        return $vo;
+        }
         public function validator($data)
         {  
                 Log::info('OrganizationService->validator: Inside'.json_encode($data));
